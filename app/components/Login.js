@@ -17,11 +17,16 @@ class Login extends React.Component {
        
         <div>
           <div className="col-md-4">
-            <button type="submit" className="btn btn-primary">Sign in</button>
+            <button type="submit" onClick={this.loginUser.bind(this)} className="btn btn-primary">Sign in</button>
           </div>
         </div>
       </form>
     );
+  }
+
+  loginUser() {
+    /* TODO: add request, axios or smthing */
+    this.props.history.push('/menu');
   }
 }
 
