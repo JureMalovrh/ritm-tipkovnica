@@ -1,9 +1,11 @@
 $font-stack:    Helvetica, sans-serif;
 $primary-color: #333;
+$background-color: #42a9f4;
 
 body {
   font: 100% $font-stack;
   color: $primary-color;
+  padding-top: 130px;
 };
 
 form {
@@ -16,7 +18,7 @@ form {
 	padding-bottom: 20px;
 	color: #000;
 	font-size: x-large;
-	background: #f4cb42;
+	background: $background-color;
 	clear: both;
 	text-align: center;
 	margin-bottom: 20px;
@@ -29,4 +31,16 @@ button {
     cursor:pointer;
     overflow: hidden;
     outline:none;
+}
+
+.nav-bar {
+	text-align: center;
+	font-size: xx-large;
+}
+
+.placeholder {
+	background: $background-color;
+	height: 500px;
+	text-align: center;
+	font-size: 50px;
 }
