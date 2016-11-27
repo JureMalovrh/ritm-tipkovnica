@@ -35,6 +35,8 @@ app.use(function(req, res) {
 	});
 });
 
+app.post('/api/user/signin', )
+
 app.listen(app.get('port'), function() {
 		console.log('Express server listening on port ' + app.get('port'));
 });

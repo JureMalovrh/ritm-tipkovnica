@@ -7,11 +7,12 @@ import Menu from './components/Menu';
 import Training from './components/Training';
 import Theory from './components/Theory';
 import Achievements from './components/Achievements';
+import First from './components/First';
 import Settings from './components/Settings';
 
 export default (
   <Route component={App}>
-    <Route path='/' component={Login} />
+    <Route path='/' component={First} />
     <Route path='/menu' component={Menu} />
     <Route path='/training' component={Training} />
     <Route path='/theory' component={Theory} />

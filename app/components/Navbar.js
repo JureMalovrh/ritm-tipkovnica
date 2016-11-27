@@ -7,7 +7,6 @@ class Navbar extends React.Component {
 		if(this.props.signedIn) {
 			signedIn = <h4> Signed in as Testni Uporabnik </h4>;
 		} else {
-			
 			signedIn = <Login />
 		}
 		return (
@@ -17,11 +16,14 @@ class Navbar extends React.Component {
 						<a href="/menu">
 							RitmTipkovnica
 						</a>
-					</div>
 
-					<div className="navbar-text navbar-right">
+
+					</div>
+					<div className="navbar-right">
 						{signedIn}
 					</div>
+
+					
 				</div>
 			</nav>
 		);

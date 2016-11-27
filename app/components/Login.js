@@ -3,23 +3,15 @@ import React from 'react';
 class Login extends React.Component {
   render() {
     return (
-      <form className="col-md-offset-4 col-md-4">
-        <div>
-          <div className="col-md-4">
-            <input type="text" className="form-control" placeholder="Username" />
-          </div>
+
+      <form className="form-inline">
+        <div className="form-group">
+          <input type="text" className="form-control" placeholder="Username" />
         </div>
-        <div>
-          <div className="col-md-4">
-            <input type="password" className="form-control" placeholder="Password" />
-          </div>
+        <div className="form-group">
+         <input type="password" className="form-control" placeholder="Password" />
         </div>
-       
-        <div>
-          <div className="col-md-4">
-            <button type="submit" onClick={this.loginUser.bind(this)} className="btn btn-primary">Sign in</button>
-          </div>
-        </div>
+        <button type="submit" onClick={this.loginUser.bind(this)} className="btn btn-primary">Sign in</button>
       </form>
     );
   }
