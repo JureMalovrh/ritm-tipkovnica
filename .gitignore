@@ -3,3 +3,4 @@ bower_components/
 npm-debug.log*
 public/js/bundle.js*
 public/js/vendor.js*
+public/js/vendor.bundle.js*
