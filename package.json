@@ -4,7 +4,7 @@
   "description": "Project for class E-learning (63518) for school year 2016/17.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "gulp build && node server.js",
     "watch": "nodemon server.js"
   },
   "babel": {
