@@ -14,6 +14,7 @@ let names = [
 	"eighth",
 ];
 
+let random = false;
 let notes = [
     [{
         time: 100,
@@ -67,14 +68,33 @@ function loadImage(list, name, url) {
 	};
 }
 
+function generateNotes(num, min, max) {
+	let notes = [];
+
+	for(let i = 0; i < num; i++) {
+		notes.push({
+			time: Math.random() * (max - min) + min,
+			name: "eighth",
+		});
+	}
+
+	return notes;
+}
+
 function clearScreen() {
 	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 }
 
 function drawNotes() {
-	let idx = Math.floor(Math.random() * 3);
+	let song = null;
 
-	notes[idx].forEach((note) => {
+	if(random === true) {
+		song = generateNotes(4, 150, 950);
+	} else {
+		song = notes[Math.floor(Math.random() * 3)];
+	}
+
+	song.forEach((note) => {
 		let x = 30 + note.time / 1000 * BAR_WIDTH - 16;
 		let y = CANVAS_HEIGHT / 2 - 48;
 
@@ -169,6 +189,7 @@ class Training extends React.Component {
 				<div className="col-md-offset-2 col-md-8 center">
 					<Canvas />
 				</div>
+				<button onClick={() => { random = !random; }}>Random</button>
 			</div>
 		);
 	}
