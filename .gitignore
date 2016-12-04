@@ -1,6 +1,7 @@
 node_modules/
 bower_components/
 npm-debug.log*
+public/css/main.css
 public/js/bundle.js*
 public/js/vendor.js*
 public/js/vendor.bundle.js*

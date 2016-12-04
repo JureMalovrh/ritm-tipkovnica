@@ -71,7 +71,7 @@ class Canvas extends React.Component {
 			context.clearRect(30, 249, 600, 2);
 
 			// Clear marks.
-			context.clearRect(30, 260, 600, 10);
+			context.clearRect(0, 260, canvas.width, 10);
 		}
 	}
 
