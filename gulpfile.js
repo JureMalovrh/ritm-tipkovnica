@@ -105,18 +105,9 @@ gulp.task('browserify-watch', ['browserify-vendor'], function() {
 
 /*
  |--------------------------------------------------------------------------
- | Compile LESS stylesheets.
+ | Compile SCSS stylesheets.
  |--------------------------------------------------------------------------
  */
-gulp.task('styles', function() {
-  return gulp.src('app/stylesheets/main.less')
-    .pipe(plumber())
-    .pipe(less())
-    .pipe(autoprefixer())
-    .pipe(gulpif(production, cssmin()))
-    .pipe(gulp.dest('public/css'));
-});
-
 gulp.task('sass', function () {
   return gulp.src('app/stylesheets/*.scss')
     .pipe(sass().on('error', sass.logError))
@@ -124,7 +115,7 @@ gulp.task('sass', function () {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('app/stylesheets/**/*.less', ['styles']);
+  gulp.watch('app/stylesheets/**/*.scss', ['sass']);
 });
 
 gulp.task('default', ['sass', 'vendor', 'browserify-watch', 'watch']);
