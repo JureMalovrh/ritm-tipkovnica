@@ -13,6 +13,7 @@ form {
 }
 
 a:hover {
+	cursor: pointer;
 	text-decoration: none;
 }
 
@@ -36,11 +37,6 @@ button {
 	outline: none;
 }
 
-.nav-bar {
-	text-align: center;
-	font-size: xx-large;
-}
-
 .placeholder {
 	background: $background-color;
 	height: 500px;
@@ -48,9 +44,17 @@ button {
 	font-size: 50px;
 }
 
-.navbar-right {
-	float: right;
-	padding-right: 20px;
+.navbar-title {
+	display: block;
+	text-align: center;
+	font-size: xx-large;
+	line-height: 50px;
+}
+
+.navbar-user {
+	position: absolute;
+	top: 6px;
+	right: 10px;
 }
 
 canvas {

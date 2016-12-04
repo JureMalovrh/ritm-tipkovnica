@@ -6,25 +6,26 @@ class Navbar extends React.Component {
 		let signedIn = null;
 
 		if(this.props.signedIn) {
-			signedIn = <h4>Signed in as Testni Uporabnik</h4>;
+			signedIn = <h4>Testni Uporabnik</h4>;
 		} else {
-			signedIn = <Login />
+			// TODO: Make it look nice.
+			// signedIn = <Login />
 		}
 
 		return (
 			<nav className="navbar navbar-default navbar-fixed-top">
 				<div className="container-fluid">
-					<div className="navbar-right">
-						{signedIn}
-					</div>
-					<div className="nav-bar">
-						<a href="/menu">
-							RitmTipkovnica
-						</a>
+					<a className="navbar-title" onClick={this.changeState.bind(this, "menu")}>RitmTipkovnica</a>
+					<div className="navbar-user">
+						<a onClick={this.changeState.bind(this, "/")}>{signedIn}</a>
 					</div>
 				</div>
 			</nav>
 		);
+	}
+
+	changeState(link) {
+		this.props.history.push(link);
 	}
 }
 

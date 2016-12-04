@@ -1,34 +1,45 @@
 import React from "react";
 import Navbar from "./Navbar";
 
+let links = [{
+	name: "Trening",
+	route: "training",
+}, {
+	name: "Teorija",
+	route: "theory",
+}, {
+	name: "Dosežki",
+	route: "achievements",
+}, {
+	name: "Nastavitve",
+	route: "Settings",
+}];
+
 // TODO: make buttons take all the view possible (whole div), translate menu values.
 class Menu extends React.Component {
 	render() {
-		// NOTE: maybe do this with map.
-		var _this = this; // just to have instance inside forEach
-		var menuValues = ["Training", "Theory", "Achievements", "Settings"];
-		var htmlMenu = [];
+		let menu = [];
 
-		menuValues.forEach(function(id) {
-			htmlMenu.push(
-				<a key={id} href="#" onClick={_this.routeMenu.bind(_this, id)}>
-					<div className="menu">{id}</div>
+		links.forEach((link) => {
+			menu.push(
+				<a key={link.route} onClick={this.changeState.bind(this, link.route)}>
+					<div className="menu">{link.name}</div>
 				</a>
-			)
+			);
 		});
 
 		return (
 			<div>
-				<Navbar signedIn={true} />
+				<Navbar signedIn={true} history={this.props.history} />
 				<div className="col-md-offset-4 col-md-4">
-					{htmlMenu}
+					{menu}
 				</div>
 			</div>
 		);
 	}
 
-	routeMenu(id) {
-		this.props.history.push("/" + id);
+	changeState(link) {
+		this.props.history.push(link);
 	}
 }
 
