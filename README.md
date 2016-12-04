@@ -1,9 +1,9 @@
 # ritm-tipkovnica
-Project for course E-learning (63518) at University of Ljubljana, Faculty of computer and information science
 
+Project for the course E-learning (63518) at the Faculty of Computer and Information Science, University of Ljubljana.
 
-For running application, you need Node.js, npm and bower installed. 
+For running the application, you need to install Node.js, npm and bower.
 
-After cloning the repo, run **npm install** and **bower install** to install all dependecies.
+After cloning the repository, run `npm install` and `bower install` to install all dependecies.
 
-For running application, use **npm start**. For building source when programing, use **gulp**.
+To run the application, use `npm start`. For building source when programming, use `gulp`.

@@ -1,17 +1,20 @@
-$font-stack:    Helvetica, sans-serif;
+$font-stack: Helvetica, sans-serif;
 $primary-color: #333;
-$background-color: #42a9f4;
+$background-color: #42A9F4;
 
 body {
-  font: 100% $font-stack;
-  color: $primary-color;
-  padding-top: 130px;
-};
+	font: 100% $font-stack;
+	color: $primary-color;
+	padding-top: 130px;
+}
 
 form {
 	padding-top: 50px;
-};
+}
 
+a:hover {
+	text-decoration: none;
+}
 
 .menu {
 	padding-top: 20px;
@@ -25,12 +28,12 @@ form {
 }
 
 button {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
+	background-color: Transparent;
+	background-repeat: no-repeat;
+	border: none;
+	cursor: pointer;
+	overflow: hidden;
+	outline: none;
 }
 
 .nav-bar {
@@ -47,4 +50,12 @@ button {
 
 .navbar-right {
 	padding-right: 20px;
+}
+
+canvas {
+	border: 1px solid black;
+}
+
+.center {
+	text-align: center;
 }
