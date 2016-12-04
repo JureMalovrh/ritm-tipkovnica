@@ -43,5 +43,8 @@ button {
 canvas {
   border: 1px solid black; }
 
+canvas:focus {
+  outline: none; }
+
 .center {
   text-align: center; }

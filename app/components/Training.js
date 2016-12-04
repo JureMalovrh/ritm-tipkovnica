@@ -32,11 +32,13 @@ let notes = [{
 }];
 
 let timer = 0;
+let pressed = false;
 
 class Canvas extends React.Component {
 	componentDidMount() {
 		canvas = this.refs.canvas;
 		context = canvas.getContext("2d");
+		canvas.focus();
 		this.setup();
 	}
 
@@ -67,17 +69,33 @@ class Canvas extends React.Component {
 			context.rect(30, 249, 600, 2);
 			context.stroke();
 			context.clearRect(30, 249, 600, 2);
+
+			// Clear marks.
+			context.clearRect(30, 260, 600, 10);
 		}
 	}
 
 	update() {
 		context.fillRect(30, 249, timer / 1000 * 600, 2);
-		// console.log(canvas.width / 1000 * timer);
+	}
+
+	keyDown(event) {
+		if(event.key != " " || pressed == true) {
+			return;
+		}
+
+		pressed = true;
+
+		context.fillRect(30 + timer / 1000 * 600 - 2, 250 + 15, 4, 4);
+	}
+
+	keyUp(event) {
+		pressed = (event.key == " ") ? false : pressed;
 	}
 
 	render() {
 		return (
-			<canvas ref="canvas" width={660} height={500} />
+			<canvas ref="canvas" width={660} height={500} tabIndex="0" onKeyDown={this.keyDown} onKeyUp={this.keyUp} />
 		);
 	}
 }
