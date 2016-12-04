@@ -42,7 +42,7 @@ class Canvas extends React.Component {
 
 	setup() {
 		notes.forEach(function(note) {
-			let x = 30 + canvas.width / 1000 * note.time - 15;
+			let x = 30 + note.time / 1000 * 600 - 15;
 			let y = 250 - 45;
 
 			context.fillRect(x, y, 30, 30);
