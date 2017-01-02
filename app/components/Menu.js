@@ -17,6 +17,11 @@ let links = [{
 
 // TODO: make buttons take all the view possible (whole div), translate menu values.
 class Menu extends React.Component {
+
+	constructor(props) {
+		super(props);
+		//console.log(this.state);
+	}
 	render() {
 		let menu = [];
 
