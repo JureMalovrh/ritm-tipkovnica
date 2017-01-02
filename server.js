@@ -3,6 +3,7 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
+
 require('babel-register');
 var swig	= require('swig');
 var React = require('react');
@@ -10,7 +11,11 @@ var ReactDOM = require('react-dom/server');
 var Router = require('react-router');
 var routes = require('./app/routes');
 
-var userController = require('./backend/controllers/users.controller.js');
+/* db handler/controller */
+var db = require('./server/controllers/db.controller.js');
+
+
+var userController = require('./server/controllers/users.controller.js');
 
 var app = express();
 
@@ -22,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.post('/api/user/signin', userController.signin);
+app.post('/api/user/register', userController.register);
 
 
 
