@@ -19,7 +19,7 @@ class Login extends React.Component {
 	render() {
 		var errText = <h4></h4>
 		if(this.state.wrongCredentials) {
-			errText = <h4 style={{"textAlign": "center", "color": "#ff0000"}}> Wrong username or password </h4>
+			errText = <h4 style={{"textAlign": "center", "color": "#ff0000"}}> Napačno uporabniško ime ali geslo </h4>
 		}
 		return (
 			<form className="form-horizontal col-md-offset-4 col-md-4">
