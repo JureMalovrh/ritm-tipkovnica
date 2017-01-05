@@ -3,10 +3,14 @@ import Login from "./Login";
 
 class Navbar extends React.Component {
 	render() {
-		let signedIn = null;
-
+		let signedIn = "KRNEKI";
+		let user = JSON.parse(localStorage.getItem('user'));
+		if(user) {
+			//console.log("User", user, user.displayName)
+			signedIn = <h2>{user.displayName}</h2>;
+			
+		}
 		if(this.props.signedIn) {
-			signedIn = <h4>Testni Uporabnik</h4>;
 		} else {
 			// TODO: Make it look nice.
 			// signedIn = <Login />
