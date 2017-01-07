@@ -10,13 +10,22 @@ let context = null;
 
 let images = {};
 let numLoaded = 0;
-let names = [
-	"eighth",
-	"quarter",
-	"half",
-];
+
+let NOTES = [{
+	name: "eighth",
+	size: 8,
+}, {
+	name: "quarter",
+	size: 4,
+}, {
+	name: "half",
+	size: 2,
+}];
+
+let SONG = generateNotes(4, 4);
 
 let METRONOME = {
+	mute: false,
 	sound: "/audio/tick.wav",
 	buffer: [],
 };
@@ -24,57 +33,23 @@ let METRONOME = {
 for(let i = 0; i < 4; i++) {
 	let time = i * 1000 / 4;
 
-	METRONOME.buffer.push({
-		audio: new Audio(METRONOME.sound),
-		start: time - 1,
-		end: time + 1,
-	});
+	if(typeof Audio !== "undefined") {
+		METRONOME.buffer.push({
+			audio: new Audio(METRONOME.sound),
+			start: time - 1,
+			end: time + 1,
+		});
+	}
 }
-
-let random = false;
-let notes = [
-    [{
-        time: 100,
-        name: "eighth",
-    }, {
-        time: 200,
-        name: "eighth",
-    }, {
-        time: 450,
-        name: "eighth",
-    }, {
-        time: 750,
-        name: "eighth",
-    }],
-    [{
-        time: 200,
-        name: "eighth",
-    }, {
-        time: 300,
-        name: "eighth",
-    }, {
-        time: 700,
-        name: "eighth",
-    }, {
-        time: 800,
-        name: "eighth",
-    }],
-    [{
-        time: 250,
-        name: "eighth",
-    }, {
-        time: 500,
-        name: "eighth",
-    }, {
-        time: 750,
-        name: "eighth",
-    }],
-];
 
 let timer = 0;
 let pressed = false;
+let played = false;
 
-let intervals = [];
+let INTERVALS = {
+	update: null,
+	tick: null,
+};
 
 function loadImage(list, name, url) {
 	list[name] = new Image();
@@ -85,14 +60,28 @@ function loadImage(list, name, url) {
 	};
 }
 
-function generateNotes(num, min, max) {
-	let notes = [];
+function generateNotes(size, num) {
+	let notes = new Array(num);
 
 	for(let i = 0; i < num; i++) {
-		notes.push({
-			time: Math.random() * (max - min) + min,
-			name: "eighth",
-		});
+		let time = (i + 0.5) * 1000 / num;
+
+		let note = null;
+
+		while(note === null) {
+			note = NOTES[parseInt(Math.random() * NOTES.length)];
+
+			if(note.size > size) {
+				note = null;
+			}
+		}
+
+		i += size / note.size - 1;
+
+		notes[i] = {
+			time: time,
+			name: note.name,
+		};
 	}
 
 	return notes;
@@ -103,15 +92,16 @@ function clearScreen() {
 }
 
 function drawNotes() {
-	let song = null;
-
-	if(random === true) {
-		song = generateNotes(4, 150, 950);
-	} else {
-		song = notes[Math.floor(Math.random() * 3)];
+	if(played === true) {
+		SONG = generateNotes(4, 4);
+		played = false;
 	}
 
-	song.forEach((note) => {
+	SONG.forEach((note) => {
+		if(note === null) {
+			return;
+		}
+
 		let x = 30 + note.time / 1000 * BAR_WIDTH - 16;
 		let y = CANVAS_HEIGHT / 2 - 48;
 
@@ -136,9 +126,8 @@ class Canvas extends React.Component {
 		timer = 0;
 		pressed = false;
 
-		intervals.forEach((interval) => {
-			clearInterval(interval);
-		});
+		clearInterval(INTERVALS.tick);
+		clearInterval(INTERVALS.update);
 
 		context.font = "32px Arial";
 		context.fillText("Nalaganje...", 250, CANVAS_HEIGHT / 2 - 20);
@@ -151,8 +140,8 @@ class Canvas extends React.Component {
 	}
 
 	load() {
-		names.forEach((name) => {
-			loadImage(images, name, "/img/" + name + ".png");
+		NOTES.forEach((note) => {
+			loadImage(images, note.name, "/img/" + note.name + ".png");
 		});
 	}
 
@@ -161,14 +150,16 @@ class Canvas extends React.Component {
 		drawNotes();
 		drawTimerBar();
 
-		intervals.push(setInterval(this.tick, 1));
-		intervals.push(setInterval(this.update, 25));
+		INTERVALS.update = setInterval(this.update, 25);
+		INTERVALS.tick = setInterval(this.tick, 1);
 	}
 
 	tick() {
-		for(let tick of METRONOME.buffer) {
-			if(timer >= tick.start && timer <= tick.end) {
-				tick.audio.play();
+		if(METRONOME.mute === false) {
+			for(let tick of METRONOME.buffer) {
+				if(timer >= tick.start && timer <= tick.end) {
+					tick.audio.play();
+				}
 			}
 		}
 
@@ -187,11 +178,15 @@ class Canvas extends React.Component {
 		context.fillRect(30, CANVAS_HEIGHT / 2, timer / 1000 * BAR_WIDTH, 2);
 
 		let metronome = parseInt(timer / 250) + 1;
-		context.clearRect(0, CANVAS_HEIGHT / 2 + 10, CANVAS_WIDTH, CANVAS_HEIGHT);
+		context.clearRect(0, CANVAS_HEIGHT / 2 + 20, CANVAS_WIDTH, CANVAS_HEIGHT);
 		context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
 	}
 
 	keyDown(event) {
+		if(event.key == " ") {
+			played = true;
+		}
+
 		if(event.key != " " || pressed == true) {
 			return;
 		}
@@ -219,7 +214,17 @@ class Training extends React.Component {
 				<div className="col-md-offset-2 col-md-8 center">
 					<Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
 				</div>
-				<button onClick={() => { random = !random; }}>Random</button>
+				<Controls />
+			</div>
+		);
+	}
+}
+
+class Controls extends React.Component {
+	render() {
+		return (
+			<div>
+				<button onClick={() => { METRONOME.mute = !METRONOME.mute; }}>Mute</button>
 			</div>
 		);
 	}
