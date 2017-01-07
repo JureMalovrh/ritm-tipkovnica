@@ -12,7 +12,24 @@ let images = {};
 let numLoaded = 0;
 let names = [
 	"eighth",
+	"quarter",
+	"half",
 ];
+
+let METRONOME = {
+	sound: "/audio/tick.wav",
+	buffer: [],
+};
+
+for(let i = 0; i < 4; i++) {
+	let time = i * 1000 / 4;
+
+	METRONOME.buffer.push({
+		audio: new Audio(METRONOME.sound),
+		start: time - 1,
+		end: time + 1,
+	});
+}
 
 let random = false;
 let notes = [
@@ -106,6 +123,9 @@ function drawTimerBar() {
 	context.rect(30, CANVAS_HEIGHT / 2, BAR_WIDTH, 2);
 	context.stroke();
 	context.clearRect(30, CANVAS_HEIGHT / 2, BAR_WIDTH, 2);
+	context.fillRect(30 + (BAR_WIDTH / 4), CANVAS_HEIGHT / 2 - 5, 2, 12);
+	context.fillRect(30 + (BAR_WIDTH / 2), CANVAS_HEIGHT / 2 - 5, 2, 12);
+	context.fillRect(30 + (3 * BAR_WIDTH / 4), CANVAS_HEIGHT / 2 - 5, 2, 12);
 }
 
 class Canvas extends React.Component {
@@ -146,9 +166,15 @@ class Canvas extends React.Component {
 	}
 
 	tick() {
-		timer++;
+		for(let tick of METRONOME.buffer) {
+			if(timer >= tick.start && timer <= tick.end) {
+				tick.audio.play();
+			}
+		}
 
-		if(timer == 1000) {
+		timer += 1.1;
+
+		if(timer >= 1000) {
 			timer = 0;
 
 			clearScreen();
@@ -159,6 +185,10 @@ class Canvas extends React.Component {
 
 	update() {
 		context.fillRect(30, CANVAS_HEIGHT / 2, timer / 1000 * BAR_WIDTH, 2);
+
+		let metronome = parseInt(timer / 250) + 1;
+		context.clearRect(0, CANVAS_HEIGHT / 2 + 10, CANVAS_WIDTH, CANVAS_HEIGHT);
+		context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
 	}
 
 	keyDown(event) {
@@ -187,7 +217,7 @@ class Training extends React.Component {
 			<div>
 				<Navbar signedIn={true} history={this.props.history} />
 				<div className="col-md-offset-2 col-md-8 center">
-					<Canvas />
+					<Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
 				</div>
 				<button onClick={() => { random = !random; }}>Random</button>
 			</div>
