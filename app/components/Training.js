@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar'
 
+// TODO: Higher resolution.
 const CANVAS_WIDTH = 660;
 const CANVAS_HEIGHT = 500;
 const BAR_WIDTH = 600;
@@ -13,25 +14,29 @@ let numLoaded = 0;
 
 let NOTES = [{
 	name: "eighth",
-	size: 8,
+	duration: 0.125,
 }, {
 	name: "quarter",
-	size: 4,
+	duration: 0.25,
 }, {
 	name: "half",
-	size: 2,
+	duration: 0.5,
 }];
 
-let SONG = generateNotes(4, 4);
+let LENGTH = 1000;
+let DURATION = 0.25;
+let COUNT = 4;
+
+let SONG = generateNotes(DURATION, COUNT);
 
 let METRONOME = {
-	mute: false,
+	mute: true,
 	sound: "/audio/tick.wav",
 	buffer: [],
 };
 
-for(let i = 0; i < 4; i++) {
-	let time = i * 1000 / 4;
+for(let i = 0; i < COUNT; i++) {
+	let time = i * LENGTH / COUNT;
 
 	if(typeof Audio !== "undefined") {
 		METRONOME.buffer.push({
@@ -42,9 +47,9 @@ for(let i = 0; i < 4; i++) {
 	}
 }
 
-let timer = 0;
-let pressed = false;
-let played = false;
+let TIMER = 0;
+let PRESSED = false;
+let PLAYED = false;
 
 let INTERVALS = {
 	update: null,
@@ -60,28 +65,50 @@ function loadImage(list, name, url) {
 	};
 }
 
-function generateNotes(size, num) {
-	let notes = new Array(num);
+function generateNotes(duration, count) {
+	let notes = [];
+	let time = 0;
+	let totalTime = duration * count;
 
-	for(let i = 0; i < num; i++) {
-		let time = (i + 0.5) * 1000 / num;
+	while(time < totalTime) {
+		let remaining = totalTime - time;
 
-		let note = null;
+		let validNotes = NOTES.filter((note) => {
+			return note.duration <= remaining;
+		}).concat(null);
 
-		while(note === null) {
-			note = NOTES[parseInt(Math.random() * NOTES.length)];
+		let idx = Math.random() * validNotes.length;
+		let note = validNotes[parseInt(idx)];
 
-			if(note.size > size) {
-				note = null;
-			}
+		if(note === null) {
+			time += duration;
+			continue;
 		}
 
-		i += size / note.size - 1;
+		let position = duration / 2;
 
-		notes[i] = {
-			time: time,
+		if(note.duration == 0.125) {
+			position = duration / 4;
+		}
+
+		// TODO
+		// if(note.duration < duration && duration % note.duration == 0) {
+		// 	console.log(...generateNotes(note.duration, duration / note.duration - 1));
+		// }
+
+		notes.push({
+			time: (time + position) / totalTime * LENGTH,
 			name: note.name,
-		};
+		});
+
+		if(note.duration == 0.125 && Math.random() < 0.5) {
+			notes.push({
+				time: (time + 3 * position) / totalTime * LENGTH,
+				name: note.name,
+			});
+		}
+
+		time += Math.max(note.duration, duration);
 	}
 
 	return notes;
@@ -92,17 +119,13 @@ function clearScreen() {
 }
 
 function drawNotes() {
-	if(played === true) {
-		SONG = generateNotes(4, 4);
-		played = false;
+	if(PLAYED === true) {
+		SONG = generateNotes(DURATION, COUNT);
+		PLAYED = false;
 	}
 
 	SONG.forEach((note) => {
-		if(note === null) {
-			return;
-		}
-
-		let x = 30 + note.time / 1000 * BAR_WIDTH - 16;
+		let x = 30 + note.time / LENGTH * BAR_WIDTH - 16;
 		let y = CANVAS_HEIGHT / 2 - 48;
 
 		context.drawImage(images[note.name], x, y, 32, 32);
@@ -113,9 +136,10 @@ function drawTimerBar() {
 	context.rect(30, CANVAS_HEIGHT / 2, BAR_WIDTH, 2);
 	context.stroke();
 	context.clearRect(30, CANVAS_HEIGHT / 2, BAR_WIDTH, 2);
-	context.fillRect(30 + (BAR_WIDTH / 4), CANVAS_HEIGHT / 2 - 5, 2, 12);
-	context.fillRect(30 + (BAR_WIDTH / 2), CANVAS_HEIGHT / 2 - 5, 2, 12);
-	context.fillRect(30 + (3 * BAR_WIDTH / 4), CANVAS_HEIGHT / 2 - 5, 2, 12);
+
+	for(let i = 1; i < COUNT; i++) {
+		context.fillRect(30 + (i * BAR_WIDTH / COUNT), CANVAS_HEIGHT / 2 - 5, 2, 12);
+	}
 }
 
 class Canvas extends React.Component {
@@ -123,8 +147,8 @@ class Canvas extends React.Component {
 		canvas = this.refs.canvas;
 		context = canvas.getContext("2d");
 
-		timer = 0;
-		pressed = false;
+		TIMER = 0;
+		PRESSED = false;
 
 		clearInterval(INTERVALS.tick);
 		clearInterval(INTERVALS.update);
@@ -157,16 +181,16 @@ class Canvas extends React.Component {
 	tick() {
 		if(METRONOME.mute === false) {
 			for(let tick of METRONOME.buffer) {
-				if(timer >= tick.start && timer <= tick.end) {
+				if(TIMER >= tick.start && TIMER <= tick.end) {
 					tick.audio.play();
 				}
 			}
 		}
 
-		timer += 1.1;
+		TIMER += 1.1;
 
-		if(timer >= 1000) {
-			timer = 0;
+		if(TIMER >= LENGTH) {
+			TIMER = 0;
 
 			clearScreen();
 			drawNotes();
@@ -175,28 +199,28 @@ class Canvas extends React.Component {
 	}
 
 	update() {
-		context.fillRect(30, CANVAS_HEIGHT / 2, timer / 1000 * BAR_WIDTH, 2);
+		context.fillRect(30, CANVAS_HEIGHT / 2, TIMER / LENGTH * BAR_WIDTH, 2);
 
-		let metronome = parseInt(timer / 250) + 1;
+		let metronome = parseInt(TIMER / (LENGTH / COUNT)) + 1;
 		context.clearRect(0, CANVAS_HEIGHT / 2 + 20, CANVAS_WIDTH, CANVAS_HEIGHT);
 		context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
 	}
 
 	keyDown(event) {
 		if(event.key == " ") {
-			played = true;
+			PLAYED = true;
 		}
 
-		if(event.key != " " || pressed == true) {
+		if(event.key != " " || PRESSED == true) {
 			return;
 		}
 
-		pressed = true;
-		context.fillRect(30 + timer / 1000 * BAR_WIDTH - 2, 250 + 16, 4, 4);
+		PRESSED = true;
+		context.fillRect(30 + TIMER / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
 	}
 
 	keyUp(event) {
-		pressed = (event.key == " ") ? false : pressed;
+		PRESSED = (event.key == " ") ? false : PRESSED;
 	}
 
 	render() {
@@ -212,20 +236,12 @@ class Training extends React.Component {
 			<div>
 				<Navbar signedIn={true} history={this.props.history} />
 				<div className="col-md-offset-2 col-md-8 center">
-					<Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
+				<Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
 				</div>
-				<Controls />
-			</div>
-		);
-	}
-}
-
-class Controls extends React.Component {
-	render() {
-		return (
-			<div>
+				<div>
 				<button onClick={() => { METRONOME.mute = !METRONOME.mute; }}>Mute</button>
-			</div>
+				</div>
+				</div>
 		);
 	}
 }
