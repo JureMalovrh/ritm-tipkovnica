@@ -2,6 +2,16 @@ import React from "react";
 import Navbar from "./Navbar";
 
 class Achievements extends React.Component {
+	constructor(props) {
+		super(props);
+		if (typeof localStorage !== 'undefined') {
+			let user = JSON.parse(localStorage.getItem('user'));
+			if(!user) {
+				this.props.history.push("/");
+			}
+		}
+	}
+	
 	render() {
 		return (
 			<div>

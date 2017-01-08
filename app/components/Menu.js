@@ -20,7 +20,12 @@ class Menu extends React.Component {
 
 	constructor(props) {
 		super(props);
-		//console.log(this.state);
+		if (typeof localStorage !== 'undefined') {
+			let user = JSON.parse(localStorage.getItem('user'));
+			if(!user) {
+				this.props.history.push("/");
+			}
+		}
 	}
 	render() {
 		let menu = [];
