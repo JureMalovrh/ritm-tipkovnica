@@ -17,6 +17,7 @@ a:hover {
 	text-decoration: none;
 }
 
+
 .menu {
 	padding-top: 20px;
 	padding-bottom: 20px;
@@ -41,7 +42,7 @@ button {
 	background: $background-color;
 	height: 500px;
 	text-align: center;
-	font-size: 50px;
+	font-size: 25px; 
 }
 
 .navbar-title {
@@ -67,4 +68,21 @@ canvas:focus {
 
 .center {
 	text-align: center;
+}
+
+.theory-navbar h3 {
+	display:inline-block;
+}
+
+.theory-navbar h2 {
+	padding-left: 50px;
+	padding-right: 50px;
+	display:inline-block;
+}
+
+.alignleft {
+	float: left;
+}
+.alignright {
+	float: right;
 }

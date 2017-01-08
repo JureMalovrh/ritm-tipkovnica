@@ -16,6 +16,7 @@ var db = require('./server/controllers/db.controller.js');
 
 
 var userController = require('./server/controllers/users.controller.js');
+var quizController = require('./server/controllers/quizzes.controller.js');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/user/signin', userController.signin);
 app.post('/api/user/register', userController.register);
+app.get('/api/lectures/:page', quizController.getLecturesPage);
 
 
 

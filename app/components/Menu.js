@@ -6,13 +6,13 @@ let links = [{
 	route: "training",
 }, {
 	name: "Teorija",
-	route: "theory",
+	route: "theory/1",
 }, {
 	name: "Dosežki",
 	route: "achievements",
 }, {
 	name: "Nastavitve",
-	route: "Settings",
+	route: "settings",
 }];
 
 // TODO: make buttons take all the view possible (whole div), translate menu values.

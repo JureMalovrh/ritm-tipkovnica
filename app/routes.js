@@ -15,8 +15,9 @@ export default (
 		<Route path="/" component={First} />
 		<Route path="/menu" component={Menu} />
 		<Route path="/training" component={Training} />
-		<Route path="/theory" component={Theory} />
+		<Route path="/theory/:page" component={Theory} />
 		<Route path="/achievements" component={Achievements} />
 		<Route path="/settings" component={Settings} />
 	</Route>
 );
+			

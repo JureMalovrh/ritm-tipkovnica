@@ -17,7 +17,7 @@ class Navbar extends React.Component {
 			<nav className="navbar navbar-default navbar-fixed-top">
 				<div className="container-fluid">
 					<div> 
-						<a className="navbar-title" onClick={this.changeState.bind(this, "menu")}>RitmTipkovnica</a>
+						<a className="navbar-title" onClick={this.changeState.bind(this, "/menu")}>RitmTipkovnica</a>
 					</div>
 					<div className="navbar-user">
 						<a onClick={this.changeState.bind(this, "/")}>{signedIn}</a>
