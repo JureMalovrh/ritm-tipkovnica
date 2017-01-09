@@ -30,6 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/api/user/signin', userController.signin);
 app.post('/api/user/register', userController.register);
 app.get('/api/lectures/:page', quizController.getLecturesPage);
+app.get('/api/quizzes/:page', quizController.getLectureQuiz);
+app.post('/api/quizzes/check/:quizId', quizController.checkQuiz);
 
 
 
