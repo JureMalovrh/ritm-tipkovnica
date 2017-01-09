@@ -4,6 +4,15 @@ import Login from "./Login";
 import Registration from "./Registration";
 
 class First extends React.Component {
+	constructor(props) {
+		super(props);
+		if (typeof localStorage !== 'undefined') {
+			let user = JSON.parse(localStorage.getItem('user'));
+			if(user) {
+				this.props.history.push("menu");
+			}
+		}
+	}
 
 	render() {
 		return (

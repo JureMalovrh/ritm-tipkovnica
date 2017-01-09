@@ -6,13 +6,13 @@ let links = [{
 	route: "training",
 }, {
 	name: "Teorija",
-	route: "theory",
+	route: "theory/1",
 }, {
 	name: "Dosežki",
 	route: "achievements",
 }, {
 	name: "Nastavitve",
-	route: "Settings",
+	route: "settings",
 }];
 
 // TODO: make buttons take all the view possible (whole div), translate menu values.
@@ -20,7 +20,12 @@ class Menu extends React.Component {
 
 	constructor(props) {
 		super(props);
-		//console.log(this.state);
+		if (typeof localStorage !== 'undefined') {
+			let user = JSON.parse(localStorage.getItem('user'));
+			if(!user) {
+				this.props.history.push("/");
+			}
+		}
 	}
 	render() {
 		let menu = [];

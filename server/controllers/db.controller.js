@@ -2,10 +2,15 @@
 
 var mongoose = require('mongoose');
 var chalk = require('chalk');
+var fs = require('fs');
 var path = require('path');
 
 /* Mongoose models requirements */
-require(path.resolve('./server/models/user.model.js'));
+let models = fs.readdirSync(path.resolve('./server/models/'));
+models.forEach(function (model) {
+	require(path.resolve('./server/models/'+model));
+})
+//console.log(models);
 
 var dbConfig = {
     uri: process.env.MONGODB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/ritm-tipkovnica-dev',

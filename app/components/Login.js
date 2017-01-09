@@ -63,10 +63,18 @@ class Login extends React.Component {
 		})
 		.then((response) => {
 			if(response.ok) {
-				this.props.history.push("menu");		
+				return response.json();
 			} else {
-				console.log(response);
-				this.setState({wrongCredentials:true});
+				return false;
+			}
+		})
+		.then((userJson) => {
+			console.log(userJson);
+			if(typeof userJson !== 'object') {
+				this.setState({wrongCredentials: true});
+			} else {
+				localStorage.setItem("user", JSON.stringify(userJson.user));
+				this.props.history.push("menu");		
 			}
 		})
 		.catch((error) => { console.error("ERROR", error); });
