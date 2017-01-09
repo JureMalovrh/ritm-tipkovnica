@@ -29,6 +29,10 @@ let COUNT = 4;
 
 let SONG = generateNotes(DURATION, COUNT);
 
+let NUM_PRESSES = 0;
+let NUM_HITS = 0;
+let SCORE = 0;
+
 let METRONOME = {
 	mute: true,
 	sound: "/audio/tick.wav",
@@ -204,6 +208,8 @@ class Canvas extends React.Component {
 		let metronome = parseInt(TIMER / (LENGTH / COUNT)) + 1;
 		context.clearRect(0, CANVAS_HEIGHT / 2 + 20, CANVAS_WIDTH, CANVAS_HEIGHT);
 		context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
+
+		context.fillText("Rezultat: " + NUM_HITS + "/" + NUM_PRESSES, 10, CANVAS_HEIGHT - 20);
 	}
 
 	keyDown(event) {
@@ -216,7 +222,33 @@ class Canvas extends React.Component {
 		}
 
 		PRESSED = true;
+		NUM_PRESSES++;
+		context.fillStyle = "#FF0000";
+
+		let margin = 15;
+		let marginOK = 30;
+
+		for(let note of SONG) {
+			if(note.time - margin <= TIMER && TIMER <= note.time + margin) {
+				SCORE += 1;
+				NUM_HITS++;
+				context.fillStyle = "#00FF00";
+				break;
+			} else if(note.time + margin < TIMER && TIMER <= note.time + marginOK) {
+				SCORE += 0.5;
+				NUM_HITS++;
+				context.fillStyle = "#FFA500";
+				break;
+			} else if(note.time - marginOK < TIMER && TIMER <= note.time - margin) {
+				SCORE += 0.5;
+				NUM_HITS++;
+				context.fillStyle = "#FFA500";
+				break;
+			}
+		}
+
 		context.fillRect(30 + TIMER / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
+		context.fillStyle = "#000000";
 	}
 
 	keyUp(event) {
@@ -236,12 +268,12 @@ class Training extends React.Component {
 			<div>
 				<Navbar signedIn={true} history={this.props.history} />
 				<div className="col-md-offset-2 col-md-8 center">
-				<Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
+					<Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
 				</div>
 				<div>
-				<button onClick={() => { METRONOME.mute = !METRONOME.mute; }}>Mute</button>
+					<button onClick={() => { METRONOME.mute = !METRONOME.mute; }}>Mute</button>
 				</div>
-				</div>
+			</div>
 		);
 	}
 }
