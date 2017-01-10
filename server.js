@@ -17,6 +17,7 @@ var db = require('./server/controllers/db.controller.js');
 
 var userController = require('./server/controllers/users.controller.js');
 var quizController = require('./server/controllers/quizzes.controller.js');
+var gameController = require('./server/controllers/games.controller.js');
 
 var app = express();
 
@@ -27,11 +28,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+
 app.post('/api/user/signin', userController.signin);
 app.post('/api/user/register', userController.register);
+
 app.get('/api/lectures/:page', quizController.getLecturesPage);
 app.get('/api/quizzes/:page', quizController.getLectureQuiz);
 app.post('/api/quizzes/check/:quizId', quizController.checkQuiz);
+app.get('/api/quizzes/check/:quizId', quizController.checkIfQuizIsSolved);
+app.get('/api/quizzes/check/:quizId', quizController.checkIfQuizIsSolved);
+
+app.post('/api/games', gameController.addNewGame);
 
 
 

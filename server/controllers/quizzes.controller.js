@@ -1,9 +1,10 @@
-'use strict'
+'use strict';
 
 var mongoose = require('mongoose');
 var path = require('path');
 var Lecture = mongoose.model('Lecture');
 var Quiz = mongoose.model('Quiz');
+var Solve = mongoose.model('Solve');
 
 exports.getLecturesPage = function (req, res) {
 	console.log(req.params.page);
@@ -29,9 +30,11 @@ exports.getLectureQuiz = function (req, res) {
 	});
 };
 
+
 exports.checkQuiz = function (req, res) {
-	
 	let quizId = req.params.quizId;
+	const user = req.body.user;
+	const answer = req.body.answer;
 
 	Quiz.findById(quizId).exec(function(err, quiz) {
 		if(err) {
