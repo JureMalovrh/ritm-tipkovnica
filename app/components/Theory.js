@@ -23,7 +23,9 @@ class Theory extends React.Component {
 			quizId: undefined,
 			quizCheck: undefined,
 			quizCorrectAnswer: undefined,
-			selectedAnswer: undefined
+			quizUserAnswer: undefined,
+			selectedAnswer: undefined,
+			quizAnswered: undefined
 		};
 
 		if (typeof localStorage !== 'undefined') {
@@ -95,6 +97,23 @@ class Theory extends React.Component {
 		}
 
 		let nextLecture = <a onClick={this.changeState.bind(this, '/theory/'+(this.state.page+1), (this.state.page+1))}> Naslednje poglavje </a>
+
+		var disabled = this.state.quizAnswered ? 'disabled' : ''
+
+		let quizCheckButton;
+
+		if(this.state.quizAnswered) {
+			quizCheckButton = <button disabled type="submit" onClick={this.checkAnswer.bind(this)} className="btn btn-default">Preveri</button>
+			if(this.state.quizUserAnswer === this.state.quizCorrectAnswer) {
+				console.log("Quiz user answer ", this.state.quizUserAnswer);
+				checkText = <p> Pravilno si odgovoril na vprašanje. Pravilen odgovor: {this.state.quizUserAnswer}</p>
+			} else {
+				checkText = <p> Napačno si odgovoril na vprašanje. Pravilen odgovor: {this.state.quizCorrectAnswer}, tvoj odgovor: {this.state.quizUserAnswer} </p>
+			}
+		} else {
+			quizCheckButton = <button type="submit" onClick={this.checkAnswer.bind(this)} className="btn btn-default">Preveri</button>
+		}
+
 		return (
 			<div>
 				<Navbar signedIn={true} history={this.props.history} />
@@ -116,7 +135,7 @@ class Theory extends React.Component {
 							<ul className="answers">
 								{quizAnswersT}
 							</ul>
-							<button type="submit" onClick={this.checkAnswer.bind(this)} className="btn btn-default">Preveri</button>
+							{quizCheckButton}
 							{checkText}
 						</div>
 					</div>
@@ -132,6 +151,11 @@ class Theory extends React.Component {
 	}
 
 	callApis() {
+		let user;
+		if (typeof localStorage !== 'undefined') {
+			user = JSON.parse(localStorage.getItem('user'));
+		}
+
 		console.log(this.state.page);
 		fetch('/api/lectures/'+this.state.page, {
 		  method: 'GET',
@@ -176,13 +200,45 @@ class Theory extends React.Component {
 				this.setState({"quizText": quizJson.message.text});
 				this.setState({"quizAnswers": quizJson.message.mixedAnswers});
 				this.setState({"quizId": quizJson.message._id});
-				
+				this.checkIfQuizAnswered(quizJson.message._id, user._id);
+			}
+		})
+		.catch((error) => { console.error("ERROR", error); });
+	}
+
+	checkIfQuizAnswered(quizId, userId) {
+		console.log("Checking if quiz answered")
+		fetch('/api/quizzes/check/'+quizId+'?user='+userId, {
+		  method: 'GET',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/json'
+		  }
+		})
+		.then((response) => {
+			if(response.ok) {
+				return response.json();
+			} else {
+				return false;
+			}
+		})
+		.then((solvingJson) => {
+			if(!(solvingJson === false) && solvingJson != undefined) {
+				console.log(solvingJson);
+				console.log(solvingJson.answer)
+				this.setState({"quizUserAnswer": solvingJson.message.answer});
+				this.setState({"quizCorrectAnswer": solvingJson.message.correctAnswer});
+				this.setState({"quizAnswered": true});
 			}
 		})
 		.catch((error) => { console.error("ERROR", error); });
 	}
 
 	checkAnswer() {
+		let user;
+		if (typeof localStorage !== 'undefined') {
+			user = JSON.parse(localStorage.getItem('user'));
+		}
 		fetch('/api/quizzes/check/'+this.state.quizId, {
 		  method: 'POST',
 		  headers: {
@@ -190,7 +246,8 @@ class Theory extends React.Component {
 		    'Content-Type': 'application/json'
 		  },
 		  body: JSON.stringify({
-		  	answer: this.state.selectedAnswer
+		  	answer: this.state.selectedAnswer,
+		  	user: user._id
 		  })
 		})
 		.then((response) => {
@@ -201,9 +258,13 @@ class Theory extends React.Component {
 			}
 		})
 		.then((checkJson) => {
-			console.log("Checkjson message", checkJson);
-			this.setState({"quizCheck": checkJson.check});
-			this.setState({"quizCorrectAnswer": checkJson.correctAnswer});
+			if(checkJson !== false) {
+				console.log("Checkjson message", checkJson);
+				this.setState({"quizCheck": checkJson.check});
+				this.setState({"quizCorrectAnswer": checkJson.correctAnswer});
+				this.setState({"quizAnswered": true});
+				
+			}
 		})
 		.catch((error) => { console.error("ERROR", error); });
 	}
@@ -219,8 +280,22 @@ class Theory extends React.Component {
 		this.props.history.push(link);
 		//console.log(page);
 		this.setState({"page": page}, () => {
+			this.setDefaultValues();
 			this.callApis();
 		});
+	}
+
+	setDefaultValues(){
+		this.setState({lectureTitle: undefined})
+		this.setState({lectureText: undefined})
+		this.setState({quizText: undefined})
+		this.setState({quizAnswers: undefined})
+		this.setState({quizId: undefined})
+		this.setState({quizCheck: undefined})
+		this.setState({quizCorrectAnswer: undefined})
+		this.setState({quizUserAnswer: undefined})
+		this.setState({selectedAnswer: undefined})
+		this.setState({quizAnswered: undefined})
 	}
 }
 

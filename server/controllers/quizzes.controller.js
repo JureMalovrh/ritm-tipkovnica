@@ -39,10 +39,42 @@ exports.checkQuiz = function (req, res) {
 			return res.json({message: err});
 		}
 		//console.log(req.body.answer, quiz.correctAnswer)
+		let solve = new Solve({
+			quiz: quiz._id,
+			user: user,
+			answer: answer,
+			correctAnswer: quiz.correctAnswer
+		});
+
 		if(quiz.correctAnswer == req.body.answer) {
 			res.json({check: true});
+			solve.save((err) => {
+				if(err) {
+					console.log("Solve save", err);
+				}
+			});
+
 		} else {
 			res.json({check: false, correctAnswer: quiz.correctAnswer});
+			solve.save((err) => {
+				if(err) {
+					console.log("Solve save", err);
+				}
+			});
 		}
 	});
 };
+
+exports.checkIfQuizIsSolved = function (req, res) {
+	let quizId = req.params.quizId;
+	let userId = req.query.user;
+
+	Solve.find({quiz: quizId, user: userId}).exec((err, solve) => {
+		if(err) {
+			res.statusCode = 400;
+			res.json({error: err});
+		} else {
+			res.json({message: solve[0]});
+		}
+	});
+}
