@@ -21,6 +21,9 @@ let NOTES = [{
 }, {
 	name: "half",
 	duration: 0.5,
+}, {
+	name: "rest",
+	duration: 0.25,
 }];
 
 let LENGTH = 1000;
@@ -79,15 +82,10 @@ function generateNotes(duration, count) {
 
 		let validNotes = NOTES.filter((note) => {
 			return note.duration <= remaining;
-		}).concat(null);
+		});
 
 		let idx = Math.random() * validNotes.length;
 		let note = validNotes[parseInt(idx)];
-
-		if(note === null) {
-			time += duration;
-			continue;
-		}
 
 		let position = duration / 2;
 
@@ -119,6 +117,7 @@ function generateNotes(duration, count) {
 }
 
 function clearScreen() {
+	// TODO: Optimize.
 	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 }
 
@@ -229,6 +228,10 @@ class Canvas extends React.Component {
 		let marginOK = 30;
 
 		for(let note of SONG) {
+			if(note.name == "rest") {
+				continue;
+			}
+
 			if(note.time - margin <= TIMER && TIMER <= note.time + margin) {
 				SCORE += 1;
 				NUM_HITS++;
