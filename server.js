@@ -39,6 +39,7 @@ app.get('/api/quizzes/check/:quizId', quizController.checkIfQuizIsSolved);
 app.get('/api/quizzes/check/:quizId', quizController.checkIfQuizIsSolved);
 
 app.post('/api/games', gameController.addNewGame);
+app.get('/api/games/:user', gameController.get10games);
 
 
 
