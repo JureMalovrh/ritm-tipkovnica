@@ -21,8 +21,11 @@ let NOTES = [{
 	name: "half",
 	duration: 0.5,
 }, {
-	name: "rest",
+	name: "quarter_rest",
 	duration: 0.25,
+}, {
+	name: "eighth_rest",
+	duration: 0.125,
 }];
 
 let LENGTH = 1000;
@@ -86,7 +89,7 @@ function generateNotes(duration, count) {
 		let remaining = totalTime - time;
 
 		let validNotes = NOTES.filter((note) => {
-			return note.duration <= remaining;
+			return (note.duration <= remaining) && (note.name != "eighth_rest");
 		});
 
 		let idx = Math.random() * validNotes.length;
@@ -108,7 +111,7 @@ function generateNotes(duration, count) {
 			} else {
 				notes.push({
 					time: (time + duration / 2) / totalTime * LENGTH,
-					name: "rest",
+					name: "eighth_rest",
 					hit: false,
 				});
 			}
@@ -140,12 +143,6 @@ function drawNotes() {
 		});
 	} else if(LEVEL == 2) {
 		// TODO
-		SONG.forEach((note) => {
-			let x = 30 + note.time / LENGTH * BAR_WIDTH - 16;
-			let y = CANVAS_HEIGHT / 2 - 48;
-
-			context.drawImage(images[note.name], x, y, 32, 32);
-		});
 	}
 }
 
@@ -200,7 +197,7 @@ class Canvas extends React.Component {
 	}
 
 	tick() {
-		if(METRONOME.mute === false && PHASE > 1 && PHASE < 5) {
+		if(METRONOME.mute === false) {
 			for(let tick of METRONOME.buffer) {
 				if(TIMER >= tick.start && TIMER <= tick.end) {
 					tick.audio.play();
@@ -245,7 +242,7 @@ class Canvas extends React.Component {
 				context.fillText((5 - metronome) + "...", CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
 			} else if(PHASE > 1 && PHASE < 5) {
 				for(let note of SONG) {
-					if(note.name == "rest" || TIMER < note.time) {
+					if(note.name == "quarter_rest" || note.name == "eighth_rest" || TIMER < note.time) {
 						continue;
 					}
 
@@ -341,7 +338,7 @@ class Canvas extends React.Component {
 		context.fillStyle = "#FF0000";
 
 		for(let note of SONG) {
-			if(note.name == "rest") {
+			if(note.name == "quarter_rest" || note.name == "eighth_rest") {
 				continue;
 			}
 
@@ -370,7 +367,12 @@ class Canvas extends React.Component {
 			}
 		}
 
-		context.fillRect(30 + TIMER / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
+		if(LEVEL == 1) {
+			context.fillRect(30 + TIMER / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
+		} else if(LEVEL == 2) {
+			// TODO
+		}
+
 		context.fillStyle = "#000000";
 	}
 
