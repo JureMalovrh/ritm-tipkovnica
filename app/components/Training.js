@@ -32,7 +32,7 @@ let LENGTH = 1000;
 let DURATION = 0.25;
 let COUNT = 4;
 
-let LEVEL = 1;
+let LEVEL = 2;
 let SONG = null;
 let GENERATE = true;
 
@@ -134,15 +134,21 @@ function drawNotes() {
 		GENERATE = false;
 	}
 
+	let y = CANVAS_HEIGHT / 2 - 48;
+
 	if(LEVEL == 1) {
 		SONG.forEach((note) => {
 			let x = 30 + note.time / LENGTH * BAR_WIDTH - 16;
-			let y = CANVAS_HEIGHT / 2 - 48;
 
 			context.drawImage(images[note.name], x, y, 32, 32);
 		});
 	} else if(LEVEL == 2) {
-		// TODO
+		let x = CANVAS_WIDTH / 2 - SONG.length * 16 - 32;
+
+		for(let note of SONG) {
+			x += 32;
+			context.drawImage(images[note.name], x, y, 32, 32);
+		}
 	}
 }
 
@@ -237,54 +243,65 @@ class Canvas extends React.Component {
 
 		let metronome = parseInt(TIMER / (LENGTH / COUNT)) + 1;
 
-		if(LEVEL == 1) {
-			if(PHASE == 1) {
-				context.fillText((5 - metronome) + "...", CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
-			} else if(PHASE > 1 && PHASE < 5) {
-				for(let note of SONG) {
-					if(note.name == "quarter_rest" || note.name == "eighth_rest" || TIMER < note.time) {
-						continue;
+		if(PHASE == 1) {
+			context.fillText((5 - metronome) + "...", CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
+		} else if(PHASE > 1 && PHASE < 5) {
+			let x = CANVAS_WIDTH / 2 - SONG.length * 16 - 32;
+
+			for(let note of SONG) {
+				x += 32;
+
+				if(note.name == "quarter_rest" || note.name == "eighth_rest" || TIMER < note.time) {
+					continue;
+				}
+
+				if(note.hit === false && TIMER > note.time + 3.75 * MARGIN_OK) {
+					if(LEVEL == 2) {
+						context.fillStyle = "#FF0000";
+						context.fillRect(x + 16 - 2, 250, 4, 4);
+						context.fillStyle = "#000000";
 					}
 
-					if(note.hit === false && TIMER > note.time + 3.75 * MARGIN_OK) {
+					note.hit = true;
+					NUM_PRESSES++;
+					break;
+				}
+			}
+
+			if(FIRST_NOTE !== null) {
+				let timing = 1000 - FIRST_NOTE;
+
+				for(let note of SONG) {
+					if(note.time == 0) {
 						note.hit = true;
-						NUM_PRESSES++;
 						break;
 					}
 				}
 
-				if(FIRST_NOTE !== null) {
-					let timing = 1000 - FIRST_NOTE;
-
-					for(let note of SONG) {
-						if(note.time == 0) {
-							note.hit = true;
-							break;
-						}
-					}
-
-					if(timing <= MARGIN_OK && timing > MARGIN) {
-						context.fillStyle = "#FFA500";
-					} else if(timing < MARGIN) {
-						context.fillStyle = "#00FF00";
-					}
-
-					context.fillRect(30 + (0 - timing) / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
-					context.fillStyle = "#000000";
-
-					FIRST_NOTE = null;
+				if(timing <= MARGIN_OK && timing > MARGIN) {
+					context.fillStyle = "#FFA500";
+				} else if(timing < MARGIN) {
+					context.fillStyle = "#00FF00";
 				}
 
-				context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
-			} else if(PHASE == 5) {
-				context.font = "16px Arial";
-				context.fillText("r - Ponovi", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 100);
-				context.fillText("n - Naprej", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 75);
-				context.fillText("u - Težje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 50);
-				context.fillText("d - Lažje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 25);
+				if(LEVEL == 1) {
+					context.fillRect(30 + (0 - timing) / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
+				} else if(LEVEL == 2) {
+					let x = CANVAS_WIDTH / 2 - SONG.length * 16;
+					context.fillRect(x + 16 - 2, 250, 4, 4);
+				}
+
+				context.fillStyle = "#000000";
+				FIRST_NOTE = null;
 			}
-		} else if(LEVEL == 2) {
-			// TODO
+
+			context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
+		} else if(PHASE == 5) {
+			context.font = "16px Arial";
+			context.fillText("r - Ponovi", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 100);
+			context.fillText("n - Naprej", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 75);
+			context.fillText("u - Težje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 50);
+			context.fillText("d - Lažje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 25);
 		}
 
 		context.font = "24px Arial";
@@ -337,40 +354,75 @@ class Canvas extends React.Component {
 		NUM_PRESSES++;
 		context.fillStyle = "#FF0000";
 
-		for(let note of SONG) {
-			if(note.name == "quarter_rest" || note.name == "eighth_rest") {
-				continue;
-			}
-
-			if(note.time - MARGIN <= TIMER && TIMER <= note.time + MARGIN) {
-				note.hit = true;
-				SCORE += 1;
-				NUM_HITS++;
-				context.fillStyle = "#00FF00";
-				break;
-			} else if(note.time + MARGIN < TIMER && TIMER <= note.time + MARGIN_OK) {
-				note.hit = true;
-				SCORE += 0.5;
-				NUM_HITS++;
-				context.fillStyle = "#FFA500";
-				break;
-			} else if(note.time - MARGIN_OK < TIMER && TIMER <= note.time - MARGIN) {
-				note.hit = true;
-				SCORE += 0.5;
-				NUM_HITS++;
-				context.fillStyle = "#FFA500";
-				break;
-			} else if(note.time == 0 && TIMER >= 1000 - MARGIN_OK) {
-				FIRST_NOTE = TIMER;
-				NUM_HITS++;
-				break;
-			}
-		}
-
 		if(LEVEL == 1) {
+			for(let note of SONG) {
+				if(note.name == "quarter_rest" || note.name == "eighth_rest") {
+					continue;
+				}
+
+				if(note.time - MARGIN <= TIMER && TIMER <= note.time + MARGIN) {
+					note.hit = true;
+					SCORE += 1;
+					NUM_HITS++;
+					context.fillStyle = "#00FF00";
+					break;
+				} else if(note.time + MARGIN < TIMER && TIMER <= note.time + MARGIN_OK) {
+					note.hit = true;
+					SCORE += 0.5;
+					NUM_HITS++;
+					context.fillStyle = "#FFA500";
+					break;
+				} else if(note.time - MARGIN_OK < TIMER && TIMER <= note.time - MARGIN) {
+					note.hit = true;
+					SCORE += 0.5;
+					NUM_HITS++;
+					context.fillStyle = "#FFA500";
+					break;
+				} else if(note.time == 0 && TIMER >= 1000 - MARGIN_OK) {
+					FIRST_NOTE = TIMER;
+					NUM_HITS++;
+					break;
+				}
+			}
+
 			context.fillRect(30 + TIMER / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
 		} else if(LEVEL == 2) {
-			// TODO
+			let x = CANVAS_WIDTH / 2 - SONG.length * 16 - 32;
+
+			for(let note of SONG) {
+				x += 32;
+
+				if(note.name == "quarter_rest" || note.name == "eighth_rest") {
+					continue;
+				}
+
+				if(note.time - MARGIN <= TIMER && TIMER <= note.time + MARGIN) {
+					note.hit = true;
+					SCORE += 1;
+					NUM_HITS++;
+					context.fillStyle = "#00FF00";
+					context.fillRect(x + 16 - 2, 250, 4, 4);
+					break;
+				} else if(note.time + MARGIN < TIMER && TIMER <= note.time + MARGIN_OK) {
+					note.hit = true;
+					SCORE += 0.5;
+					NUM_HITS++;
+					context.fillStyle = "#FFA500";
+					context.fillRect(x + 16 - 2, 250, 4, 4);
+					break;
+				} else if(note.time - MARGIN_OK < TIMER && TIMER <= note.time - MARGIN) {
+					note.hit = true;
+					SCORE += 0.5;
+					NUM_HITS++;
+					context.fillStyle = "#FFA500";
+					context.fillRect(x + 16 - 2, 250, 4, 4);
+					break;
+				} else if(note.time == 0 && TIMER >= 1000 - MARGIN_OK) {
+					FIRST_NOTE = TIMER;
+					NUM_HITS++;
+					break;
+				}
+			}
 		}
 
 		context.fillStyle = "#000000";
