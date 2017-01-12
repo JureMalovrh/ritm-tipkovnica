@@ -1,6 +1,87 @@
 [
   {
     "type": "post",
+    "url": "/api/achievements",
+    "title": "Create new achievement",
+    "name": "CreateAchievement",
+    "group": "Achievement",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "user",
+            "description": "<p>User _id from localstorage</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "sort",
+            "description": "<p>Get param for sort [&quot;date&quot;, &quot;points&quot;]</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "level",
+            "description": "<p>Get param for filtering [1,2]</p> <p>/**</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "text",
+            "description": "<p>Achievement text</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Achievement description</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "optional": false,
+            "field": "date",
+            "description": "<p>Date of the achievement [default: now]</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "server/doc/doc.js",
+    "groupTitle": "Achievement"
+  },
+  {
+    "type": "get",
+    "url": "/api/achievements/:user",
+    "title": "Get users achievements",
+    "name": "ListAchievements",
+    "group": "Achievement",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "user",
+            "description": "<p>User _id from localstorage</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "server/doc/doc.js",
+    "groupTitle": "Achievement"
+  },
+  {
+    "type": "post",
     "url": "/api/games",
     "title": "Create new game",
     "name": "CreateGame",
@@ -35,43 +116,6 @@
             "optional": false,
             "field": "level",
             "description": "<p>Level of the game</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "server/doc/doc.js",
-    "groupTitle": "Game"
-  },
-  {
-    "type": "get",
-    "url": "/api/games/:user",
-    "title": "Get users last 10 games",
-    "name": "ListGames",
-    "group": "Game",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "user",
-            "description": "<p>User _id from localstorage</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "sort",
-            "description": "<p>Get param for sort [&quot;date&quot;, &quot;points&quot;]</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "level",
-            "description": "<p>Get param for filtering [1,2]</p>"
           }
         ]
       }

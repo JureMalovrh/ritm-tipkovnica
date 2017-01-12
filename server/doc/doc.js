@@ -81,4 +81,24 @@
  * @apiParam {String} sort Get param for sort ["date", "points"]
  * @apiParam {Number} level Get param for filtering [1,2]
  *
+
+  /**
+ * @api {post} /api/achievements Create new achievement
+ * @apiName CreateAchievement
+ * @apiGroup Achievement
+ *
+ * @apiParam {String} user User _id from localstorage
+ * @apiParam {String} text Achievement text
+ * @apiParam {String} description Achievement description
+ * @apiParam {Date} date Date of the achievement [default: now]
+ *
+ */
+
+ /**
+ * @api {get} /api/achievements/:user Get users achievements
+ * @apiName ListAchievements
+ * @apiGroup Achievement
+ *
+ * @apiParam {String} user User _id from localstorage
+ *
  */

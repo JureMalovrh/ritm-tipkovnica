@@ -5,6 +5,7 @@ var path = require('path');
 var Lecture = mongoose.model('Lecture');
 var Quiz = mongoose.model('Quiz');
 var Solve = mongoose.model('Solve');
+var Achievement = mongoose.model('Achievement');
 
 exports.getLecturesPage = function (req, res) {
 	console.log(req.params.page);
@@ -55,6 +56,7 @@ exports.checkQuiz = function (req, res) {
 				if(err) {
 					console.log("Solve save", err);
 				}
+				createAchievement(user);
 			});
 
 		} else {
@@ -63,10 +65,32 @@ exports.checkQuiz = function (req, res) {
 				if(err) {
 					console.log("Solve save", err);
 				}
+				createAchievement(user);
+
 			});
+
 		}
 	});
 };
+
+function createAchievement(user) {
+	Solve.count({user: user}, (err, solveCount) => {
+		console.log("Solve count", solveCount);
+		if(solveCount == 7) {
+
+			let achievement = new Achievement({
+				user: user,
+				text: 'Rešeni vsi kvizi',
+				description: 'Bravo! Rešil si vse teoretične kvize.'
+			});
+			achievement.save((err) => {
+				if(err) {
+					console.log('err', err);
+				}
+			})
+		}
+	});
+}
 
 exports.checkIfQuizIsSolved = function (req, res) {
 	let quizId = req.params.quizId;

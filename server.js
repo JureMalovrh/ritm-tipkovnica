@@ -18,6 +18,7 @@ var db = require('./server/controllers/db.controller.js');
 var userController = require('./server/controllers/users.controller.js');
 var quizController = require('./server/controllers/quizzes.controller.js');
 var gameController = require('./server/controllers/games.controller.js');
+var achievementController = require('./server/controllers/achievements.controller.js');
 
 var app = express();
 
@@ -41,6 +42,8 @@ app.get('/api/quizzes/check/:quizId', quizController.checkIfQuizIsSolved);
 app.post('/api/games', gameController.addNewGame);
 app.get('/api/games/:user', gameController.get10games);
 
+app.post('/api/achievements', achievementController.addNewAchievement);
+app.get('/api/achievements/:user', achievementController.getUserAchievements);
 
 
 

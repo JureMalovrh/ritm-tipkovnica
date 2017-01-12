@@ -12,6 +12,8 @@ exports.addNewGame = function (req, res) {
 			return res.json({error: err});
 		}
 		res.json({message: game});
+
+		
 	}); 
 };
 
