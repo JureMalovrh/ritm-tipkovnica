@@ -46,13 +46,28 @@ class Theory extends React.Component {
 		let text = [];
 		if(this.state.lectureText) {
 			let lectureText = this.state.lectureText;
-			lectureText.forEach((lt) => {
-				text.push(
-					<p key={lt}>
-						{lt}
-					</p>
-				);
-			});
+			if(this.state.page == 3) {
+				let images = ['/img/quarter.png', '/img/eighth.png', '/img/half.png']
+				lectureText.forEach((lt, index) => {
+					text.push(
+						<div>
+							<img src= {images[index-1]} style={{"width":"50px"}} />
+							<p key={lt}>
+								{lt}
+							</p>
+						</div>
+					);
+				});
+			} else {
+				lectureText.forEach((lt) => {
+					text.push(
+						<p key={lt}>
+							{lt}
+						</p>
+					);
+				});
+				
+			}
 		} else {
 			text = <p> Text placeholder </p>
 		}
@@ -95,14 +110,14 @@ class Theory extends React.Component {
 		if((this.state.page-1) > 0) {
 			previousLecture = <a onClick={this.changeState.bind(this, '/theory/'+(this.state.page-1), (this.state.page-1))}> Prejšnje poglavje </a>;
 		}
-
-		let nextLecture = <a onClick={this.changeState.bind(this, '/theory/'+(this.state.page+1), (this.state.page+1))}> Naslednje poglavje </a>
-
-		var disabled = this.state.quizAnswered ? 'disabled' : ''
-
+		let nextLecture
+		if((this.state.page+1) < 8) {
+			nextLecture = <a onClick={this.changeState.bind(this, '/theory/'+(this.state.page+1), (this.state.page+1))}> Naslednje poglavje </a>
+		}
+		
 		let quizCheckButton;
 
-		if(this.state.quizAnswered) {
+		if(this.state.quizAnswered && !(typeof (this.state.quizCheck) == "boolean")) {
 			quizCheckButton = <button disabled type="submit" onClick={this.checkAnswer.bind(this)} className="btn btn-default">Preveri</button>
 			if(this.state.quizUserAnswer === this.state.quizCorrectAnswer) {
 				console.log("Quiz user answer ", this.state.quizUserAnswer);
