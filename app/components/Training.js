@@ -1,7 +1,6 @@
-import React from 'react';
-import Navbar from './Navbar'
+import React from "react";
+import Navbar from "./Navbar"
 
-// TODO: Higher resolution.
 const CANVAS_WIDTH = 660;
 const CANVAS_HEIGHT = 500;
 const BAR_WIDTH = 600;
@@ -30,14 +29,20 @@ let LENGTH = 1000;
 let DURATION = 0.25;
 let COUNT = 4;
 
-let SONG = generateNotes(DURATION, COUNT);
+let LEVEL = 1;
+let SONG = null;
+let GENERATE = true;
 
 let NUM_PRESSES = 0;
 let NUM_HITS = 0;
 let SCORE = 0;
 
+let MARGIN = 15;
+let MARGIN_OK = 30;
+let FIRST_NOTE = null;
+
 let METRONOME = {
-	mute: true,
+	mute: false,
 	sound: "/audio/tick.wav",
 	buffer: [],
 };
@@ -56,7 +61,7 @@ for(let i = 0; i < COUNT; i++) {
 
 let TIMER = 0;
 let PRESSED = false;
-let PLAYED = false;
+let PHASE = 1;
 
 let INTERVALS = {
 	update: null,
@@ -87,27 +92,26 @@ function generateNotes(duration, count) {
 		let idx = Math.random() * validNotes.length;
 		let note = validNotes[parseInt(idx)];
 
-		let position = duration / 2;
-
-		if(note.duration == 0.125) {
-			position = duration / 4;
-		}
-
-		// TODO
-		// if(note.duration < duration && duration % note.duration == 0) {
-		// 	console.log(...generateNotes(note.duration, duration / note.duration - 1));
-		// }
-
 		notes.push({
-			time: (time + position) / totalTime * LENGTH,
+			time: time / totalTime * LENGTH,
 			name: note.name,
+			hit: false,
 		});
 
-		if(note.duration == 0.125 && Math.random() < 0.5) {
-			notes.push({
-				time: (time + 3 * position) / totalTime * LENGTH,
-				name: note.name,
-			});
+		if(note.duration == 0.125) {
+			if(Math.random() < 0.5) {
+				notes.push({
+					time: (time + duration / 2) / totalTime * LENGTH,
+					name: note.name,
+					hit: false,
+				});
+			} else {
+				notes.push({
+					time: (time + duration / 2) / totalTime * LENGTH,
+					name: "rest",
+					hit: false,
+				});
+			}
 		}
 
 		time += Math.max(note.duration, duration);
@@ -117,25 +121,39 @@ function generateNotes(duration, count) {
 }
 
 function clearScreen() {
-	// TODO: Optimize.
-	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	context.clearRect(0, CANVAS_HEIGHT / 2 - 50, CANVAS_WIDTH, 100);
+	context.clearRect(0, CANVAS_HEIGHT - 20, CANVAS_WIDTH, 20);
 }
 
 function drawNotes() {
-	if(PLAYED === true) {
+	if(GENERATE === true) {
 		SONG = generateNotes(DURATION, COUNT);
-		PLAYED = false;
+		GENERATE = false;
 	}
 
-	SONG.forEach((note) => {
-		let x = 30 + note.time / LENGTH * BAR_WIDTH - 16;
-		let y = CANVAS_HEIGHT / 2 - 48;
+	if(LEVEL == 1) {
+		SONG.forEach((note) => {
+			let x = 30 + note.time / LENGTH * BAR_WIDTH - 16;
+			let y = CANVAS_HEIGHT / 2 - 48;
 
-		context.drawImage(images[note.name], x, y, 32, 32);
-	});
+			context.drawImage(images[note.name], x, y, 32, 32);
+		});
+	} else if(LEVEL == 2) {
+		// TODO
+		SONG.forEach((note) => {
+			let x = 30 + note.time / LENGTH * BAR_WIDTH - 16;
+			let y = CANVAS_HEIGHT / 2 - 48;
+
+			context.drawImage(images[note.name], x, y, 32, 32);
+		});
+	}
 }
 
 function drawTimerBar() {
+	if(LEVEL != 1) {
+		return;
+	}
+
 	context.rect(30, CANVAS_HEIGHT / 2, BAR_WIDTH, 2);
 	context.stroke();
 	context.clearRect(30, CANVAS_HEIGHT / 2, BAR_WIDTH, 2);
@@ -182,7 +200,7 @@ class Canvas extends React.Component {
 	}
 
 	tick() {
-		if(METRONOME.mute === false) {
+		if(METRONOME.mute === false && PHASE > 1 && PHASE < 5) {
 			for(let tick of METRONOME.buffer) {
 				if(TIMER >= tick.start && TIMER <= tick.end) {
 					tick.audio.play();
@@ -193,27 +211,125 @@ class Canvas extends React.Component {
 		TIMER += 1.1;
 
 		if(TIMER >= LENGTH) {
-			TIMER = 0;
+			PHASE++;
 
-			clearScreen();
-			drawNotes();
-			drawTimerBar();
+			if(PHASE == 5) {
+				clearInterval(INTERVALS.tick);
+			} else {
+				TIMER = 0;
+
+				for(let note of SONG) {
+					note.hit = false;
+				}
+
+				clearScreen();
+				drawNotes();
+				drawTimerBar();
+			}
 		}
 	}
 
 	update() {
-		context.fillRect(30, CANVAS_HEIGHT / 2, TIMER / LENGTH * BAR_WIDTH, 2);
+		context.font = "32px Arial";
+
+		if(LEVEL == 1) {
+			context.fillRect(30, CANVAS_HEIGHT / 2, TIMER / LENGTH * BAR_WIDTH, 2);
+		}
+
+		context.clearRect(0, CANVAS_HEIGHT / 2 + 20, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 		let metronome = parseInt(TIMER / (LENGTH / COUNT)) + 1;
-		context.clearRect(0, CANVAS_HEIGHT / 2 + 20, CANVAS_WIDTH, CANVAS_HEIGHT);
-		context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
 
-		context.fillText("Rezultat: " + NUM_HITS + "/" + NUM_PRESSES, 10, CANVAS_HEIGHT - 20);
+		if(LEVEL == 1) {
+			if(PHASE == 1) {
+				context.fillText((5 - metronome) + "...", CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
+			} else if(PHASE > 1 && PHASE < 5) {
+				for(let note of SONG) {
+					if(note.name == "rest" || TIMER < note.time) {
+						continue;
+					}
+
+					if(note.hit === false && TIMER > note.time + 3.75 * MARGIN_OK) {
+						note.hit = true;
+						NUM_PRESSES++;
+						break;
+					}
+				}
+
+				if(FIRST_NOTE !== null) {
+					let timing = 1000 - FIRST_NOTE;
+
+					for(let note of SONG) {
+						if(note.time == 0) {
+							note.hit = true;
+							break;
+						}
+					}
+
+					if(timing <= MARGIN_OK && timing > MARGIN) {
+						context.fillStyle = "#FFA500";
+					} else if(timing < MARGIN) {
+						context.fillStyle = "#00FF00";
+					}
+
+					context.fillRect(30 + (0 - timing) / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
+					context.fillStyle = "#000000";
+
+					FIRST_NOTE = null;
+				}
+
+				context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
+			} else if(PHASE == 5) {
+				context.font = "16px Arial";
+				context.fillText("r - Ponovi", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 100);
+				context.fillText("n - Naprej", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 75);
+				context.fillText("u - Težje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 50);
+				context.fillText("d - Lažje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 25);
+			}
+		} else if(LEVEL == 2) {
+			// TODO
+		}
+
+		context.font = "24px Arial";
+		context.fillText("Rezultat: " + SCORE, 15, CANVAS_HEIGHT - 50);
+		context.fillText("Natančnost: " + NUM_HITS + "/" + NUM_PRESSES, 15, CANVAS_HEIGHT - 20);
 	}
 
 	keyDown(event) {
-		if(event.key == " ") {
-			PLAYED = true;
+		if(PHASE == 1) {
+			return;
+		}
+
+		if(PHASE == 5) {
+			if(event.key != "r" && event.key != "n" && event.key != "u" && event.key != "d") {
+				return;
+			}
+
+			GENERATE = true;
+
+			if(event.key == "r") {
+				GENERATE = false;
+			}
+
+			if(event.key == "u") {
+				LEVEL++;
+			} else if(event.key == "d") {
+				LEVEL--;
+			}
+
+			NUM_PRESSES = 0;
+			NUM_HITS = 0;
+
+			TIMER = 0;
+			PHASE = 1;
+
+			INTERVALS.tick = setInterval(this.tick, 1);
+
+			clearScreen();
+			drawNotes();
+			drawTimerBar();
+
+			return;
 		}
 
 		if(event.key != " " || PRESSED == true) {
@@ -224,28 +340,32 @@ class Canvas extends React.Component {
 		NUM_PRESSES++;
 		context.fillStyle = "#FF0000";
 
-		let margin = 15;
-		let marginOK = 30;
-
 		for(let note of SONG) {
 			if(note.name == "rest") {
 				continue;
 			}
 
-			if(note.time - margin <= TIMER && TIMER <= note.time + margin) {
+			if(note.time - MARGIN <= TIMER && TIMER <= note.time + MARGIN) {
+				note.hit = true;
 				SCORE += 1;
 				NUM_HITS++;
 				context.fillStyle = "#00FF00";
 				break;
-			} else if(note.time + margin < TIMER && TIMER <= note.time + marginOK) {
+			} else if(note.time + MARGIN < TIMER && TIMER <= note.time + MARGIN_OK) {
+				note.hit = true;
 				SCORE += 0.5;
 				NUM_HITS++;
 				context.fillStyle = "#FFA500";
 				break;
-			} else if(note.time - marginOK < TIMER && TIMER <= note.time - margin) {
+			} else if(note.time - MARGIN_OK < TIMER && TIMER <= note.time - MARGIN) {
+				note.hit = true;
 				SCORE += 0.5;
 				NUM_HITS++;
 				context.fillStyle = "#FFA500";
+				break;
+			} else if(note.time == 0 && TIMER >= 1000 - MARGIN_OK) {
+				FIRST_NOTE = TIMER;
+				NUM_HITS++;
 				break;
 			}
 		}
@@ -260,7 +380,7 @@ class Canvas extends React.Component {
 
 	render() {
 		return (
-			<canvas ref="canvas" width={CANVAS_WIDTH} height={CANVAS_HEIGHT} tabIndex="0" onKeyDown={this.keyDown} onKeyUp={this.keyUp} />
+			<canvas ref="canvas" width={CANVAS_WIDTH} height={CANVAS_HEIGHT} tabIndex="0" onKeyDown={this.keyDown.bind(this)} onKeyUp={this.keyUp} />
 		);
 	}
 }
