@@ -12,11 +12,11 @@ exports.addNewAchievement = function (req, res) {
 			return res.json({error: err});
 		}
 		res.json({message: achievement});
-	}); 
+	});
 };
 
 exports.getUserAchievements = function (req, res) {
-	let userId = req.param.user;
+	let userId = req.params.user;
 	Achievement.find({user: userId}).sort('-date').exec((err, achievements) => {
 		if(err) {
 			res.statusCode = 400;
