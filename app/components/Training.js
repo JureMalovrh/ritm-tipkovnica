@@ -224,6 +224,36 @@ class Canvas extends React.Component {
 
 			if(PHASE == 5) {
 				clearInterval(INTERVALS.tick);
+
+				let user = null;
+				if(typeof localStorage !== "undefined") {
+					user = JSON.parse(localStorage.getItem("user"));
+				}
+
+				fetch("api/games", {
+					method: "POST",
+					headers: {
+						"Accept": "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						user: user._id,
+						points: SCORE,
+						// TODO: Don't count rests.
+						allPoints: 3 * SONG.length,
+						level: LEVEL,
+					})
+				})
+					.then((response) => {
+						if(response.ok) {
+							return response.json();
+						} else {
+							return false;
+						}
+					})
+					.catch((error) => {
+						console.error("ERROR", error);
+					});
 			} else {
 				TIMER = 0;
 
