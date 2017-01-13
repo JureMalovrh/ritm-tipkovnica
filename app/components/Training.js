@@ -194,6 +194,12 @@ class Canvas extends React.Component {
 	}
 
 	init() {
+		let temp = setInterval(null, 1000);
+
+		for(let i = 0; i <= temp; i++) {
+			clearInterval(i);
+		}
+
 		clearScreen();
 		drawNotes();
 		drawTimerBar();

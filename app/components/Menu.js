@@ -15,9 +15,8 @@ let links = [{
 	route: "settings",
 }];
 
-// TODO: make buttons take all the view possible (whole div), translate menu values.
+// TODO: make buttons take all the view possible (whole div).
 class Menu extends React.Component {
-
 	constructor(props) {
 		super(props);
 		if (typeof localStorage !== 'undefined') {
@@ -26,7 +25,13 @@ class Menu extends React.Component {
 				this.props.history.push("/");
 			}
 		}
+
+		let temp = setInterval(null, 1000);
+		for(let i = 0; i <= temp; i++) {
+			clearInterval(i);
+		}
 	}
+
 	render() {
 		let menu = [];
 
