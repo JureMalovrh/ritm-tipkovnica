@@ -32,7 +32,7 @@ let LENGTH = 1000;
 let DURATION = 0.25;
 let COUNT = 4;
 
-let LEVEL = 2;
+let LEVEL = 1;
 let SONG = null;
 let GENERATE = true;
 

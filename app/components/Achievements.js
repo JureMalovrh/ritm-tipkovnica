@@ -7,8 +7,8 @@ class Achievements extends React.Component {
 			super(props);
 
 			this.state = {
-				last10lvl1games: undefined, 
-				last10lvl2games: undefined 
+				last10lvl1games: undefined,
+				last10lvl2games: undefined
 			};
 
 			if (typeof localStorage !== 'undefined') {
@@ -17,11 +17,11 @@ class Achievements extends React.Component {
 					this.props.history.push("/");
 				}
 			}
-			
+
 		}
 
 		render() {
-			
+
 			let lvl1Games = [];
 			if(this.state.last10lvl1games) {
 				let last10lvl1games = this.state.last10lvl1games;
@@ -39,7 +39,7 @@ class Achievements extends React.Component {
 				} else {
 					lvl1Games = <p> Nisi odigral še nobenih iger </p>
 				}
-			} 
+			}
 
 			let lvl2Games = [];
 			if(this.state.last10lvl2games) {
@@ -65,7 +65,7 @@ class Achievements extends React.Component {
 					<Navbar signedIn={true} history={this.props.history} />
 					<div className="col-md-offset-2 col-md-8 placeholder">
 						<h2> Zadnjih 10 iger stopnje 1</h2>
-						<table> 
+						<table>
 							<tr>
 								<th> Igra </th>
 								<th> Dobljeno število točk </th>
@@ -75,7 +75,7 @@ class Achievements extends React.Component {
 							{lvl1Games}
 						</table>
 						<h2> Zadnjih 10 iger stopnje 2</h2>
-						<table> 
+						<table>
 							<tr>
 								<th> Igra </th>
 								<th> Dobljeno število točk </th>

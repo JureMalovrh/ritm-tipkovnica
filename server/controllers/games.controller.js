@@ -13,14 +13,14 @@ exports.addNewGame = function (req, res) {
 		}
 		res.json({message: game});
 
-		
-	}); 
+
+	});
 };
 
 exports.get10games = function (req, res) {
 	let sort = (req.query.sort) ? '-'+req.query.sort : '-date';
-	let level = (req.query.level) ? req.query.leve : 1;
-	let userId = req.param.user;
+	let level = (req.query.level) ? req.query.level : 1;
+	let userId = req.params.user;
 	Game.find({user: userId, level: level}).sort(sort).limit(10).exec((err, games) => {
 		if(err) {
 			res.statusCode = 400;
