@@ -7,7 +7,9 @@ class Achievements extends React.Component {
 
 		this.state = {
 			last10lvl1games: undefined,
-			last10lvl2games: undefined
+			last10lvl2games: undefined,
+			last10lvl3games: undefined,
+			lastAchievements: undefined,
 		};
 
 		if (typeof localStorage !== 'undefined') {
@@ -30,58 +32,144 @@ class Achievements extends React.Component {
 							<td>{idx + 1}</td>
 							<td>{lastGame.points}</td>
 							<td>{lastGame.allPoints}</td>
-							<td>{lastGame.date}</td>
+							<td>{moment(lastGame.date).format("YYYY-MM-DD HH:mm")}</td>
 						</tr>
 					);
 				});
 			} else {
-				lvl1Games = <p> Nisi odigral še nobenih iger </p>
+				lvl1Games = <tr><td colSpan={4}>Nisi odigral še nobenih iger.</td></tr>
 			}
 		}
 
 		let lvl2Games = [];
 		if(this.state.last10lvl2games) {
-			let last10lvl2games = this.state.last10lvl2games;
-			if(last10lvl2games.length > 0) {
-				last10lvl2games.forEach((lastGame, idx) => {
+			if(this.state.last10lvl2games.length > 0) {
+				this.state.last10lvl2games.forEach((lastGame, idx) => {
 					lvl2Games.push(
 						<tr key={lastGame._id}>
 							<td>{idx + 1}</td>
 							<td>{lastGame.points}</td>
 							<td>{lastGame.allPoints}</td>
-							<td>{lastGame.date}</td>
+							<td>{moment(lastGame.date).format("YYYY-MM-DD HH:mm")}</td>
 						</tr>
 					);
 				});
 			} else {
-				lvl2Games = <p> Nisi odigral še nobenih iger </p>
+				lvl2Games = <tr><td colSpan={4}>Nisi odigral še nobenih iger.</td></tr>
+			}
+		}
+
+		let lvl3Games = [];
+		if(this.state.last10lvl3games) {
+			let last10lvl3games = this.state.last10lvl3games;
+
+			if(last10lvl3games.length > 0) {
+				last10lvl3games.forEach((lastGame, idx) => {
+					lvl3Games.push(
+						<tr key={lastGame._id}>
+							<td>{idx + 1}</td>
+							<td>{lastGame.points}</td>
+							<td>{lastGame.allPoints}</td>
+							<td>{moment(lastGame.date).format("YYYY-MM-DD HH:mm")}</td>
+						</tr>
+					);
+				});
+			} else {
+				lvl3Games = <tr><td colSpan={4}>Nisi odigral še nobenih iger.</td></tr>
+			}
+		}
+
+		let achievements = [];
+		if(this.state.lastAchievements) {
+			if(this.state.lastAchievements.length > 0) {
+				this.state.lastAchievements.forEach((achievement, idx) => {
+					achievements.push(
+						<tr key={achievement._id}>
+							<td>{achievement.text}</td>
+							<td>{achievement.description}</td>
+							<td>{moment(achievement.date).format("YYYY-MM-DD HH:mm")}</td>
+						</tr>
+					);
+				});
+			} else {
+				achievements = <tr><td colSpan={3}>Trenutno nimaš nobenih dosežkov.</td></tr>
 			}
 		}
 
 		return (
 			<div>
 				<Navbar signedIn={true} history={this.props.history} />
-				<div className="col-md-offset-2 col-md-8 placeholder">
-					<h2> Zadnjih 10 iger stopnje 1</h2>
-					<table>
-						<tr>
-							<th>Igra</th>
-							<th>Dobljeno število točk</th>
-							<th>Vseh točk</th>
-							<th>Datum igre</th>
-						</tr>
-						{lvl1Games}
-					</table>
-					<h2> Zadnjih 10 iger stopnje 2</h2>
-					<table>
-						<tr>
-							<th>Igra</th>
-							<th>Dobljeno število točk</th>
-							<th>Vseh točk</th>
-							<th>Datum igre</th>
-						</tr>
-					{lvl2Games}
-					</table>
+				<div className="container">
+					<div className="row">
+						<div className="col-sm-4">
+							<h3 className="text-center">Prva stopnja</h3>
+							<br />
+							<table className="table">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Točke</th>
+										<th>Skupaj</th>
+										<th>Datum</th>
+									</tr>
+								</thead>
+								<tbody>
+									{lvl1Games}
+								</tbody>
+							</table>
+						</div>
+						<div className="col-sm-4">
+							<h3 className="text-center">Druga stopnja</h3>
+							<br />
+							<table className="table">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Točke</th>
+										<th>Skupaj</th>
+										<th>Datum</th>
+									</tr>
+								</thead>
+								<tbody>
+									{lvl2Games}
+								</tbody>
+							</table>
+						</div>
+						<div className="col-sm-4">
+							<h3 className="text-center">Tretja stopnja</h3>
+							<br />
+							<table className="table">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Točke</th>
+										<th>Skupaj</th>
+										<th>Datum</th>
+									</tr>
+								</thead>
+								<tbody>
+									{lvl3Games}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div className="row">
+						<div className="col-xs-12">
+							<h3>Dosežki</h3>
+							<table className="table">
+								<thead>
+									<tr>
+										<th>Ime</th>
+										<th>Opis</th>
+										<th>Datum</th>
+									</tr>
+								</thead>
+								<tbody>
+									{achievements}
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -112,12 +200,10 @@ class Achievements extends React.Component {
 			}
 		})
 		.then((gamesJson) => {
-			console.log(gamesJson)
 			if(!(gamesJson === false)) {
 				this.setState({"last10lvl1games": gamesJson.message});
 			}
-		})
-		.catch((error) => { console.error("ERROR", error); });
+		});
 
 		fetch('/api/games/'+user._id+'?sort=date&level=2', {
 			method: 'GET',
@@ -134,12 +220,50 @@ class Achievements extends React.Component {
 			}
 		})
 		.then((gamesJson) => {
-			console.log(gamesJson)
 			if(!(gamesJson === false)) {
 				this.setState({"last10lvl2games": gamesJson.message});
 			}
+		});
+
+		fetch('/api/games/'+user._id+'?sort=date&level=3', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			}
 		})
-		.catch((error) => { console.error("ERROR", error); });
+		.then((response) => {
+			if(response.ok) {
+				return response.json();
+			} else {
+				return false;
+			}
+		})
+		.then((gamesJson) => {
+			if(!(gamesJson === false)) {
+				this.setState({"last10lvl3games": gamesJson.message});
+			}
+		});
+
+		fetch('/api/achievements/'+user._id+'?sort=date', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			}
+		})
+		.then((response) => {
+			if(response.ok) {
+				return response.json();
+			} else {
+				return false;
+			}
+		})
+		.then((achievementsJson) => {
+			if(!(achievementsJson === false)) {
+				this.setState({"lastAchievements": achievementsJson.message});
+			}
+		});
 	}
 }
 

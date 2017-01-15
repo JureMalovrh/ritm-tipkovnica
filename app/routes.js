@@ -1,7 +1,6 @@
 import React from "react";
 import Route from "react-router";
 import App from "./components/App";
-import Home from "./components/Home";
 import Login from "./components/Login";
 import Menu from "./components/Menu";
 import Training from "./components/Training";
@@ -20,4 +19,3 @@ export default (
 		<Route path="/settings" component={Settings} />
 	</Route>
 );
-			

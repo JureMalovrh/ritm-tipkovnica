@@ -1,27 +1,26 @@
 import React from "react";
 import Login from "./Login";
 
+import DropdownButton from "react-bootstrap/lib/DropdownButton";
+import MenuItem from "react-bootstrap/lib/MenuItem";
+
 class Navbar extends React.Component {
 	render() {
 		let signedIn;
 		if (typeof localStorage !== 'undefined') {
 			let user = JSON.parse(localStorage.getItem('user'));
 			if(user) {
-				//console.log("User", user, user.displayName)
-				signedIn = <h2>{user.displayName}</h2>;
-				
+				signedIn = <DropdownButton title={user.displayName}>
+					<MenuItem onClick={this.logout.bind(this)}>Odjava</MenuItem>
+				</DropdownButton>;
 			}
 		}
-		
+
 		return (
 			<nav className="navbar navbar-default navbar-fixed-top">
 				<div className="container-fluid">
-					<div> 
-						<a className="navbar-title" onClick={this.changeState.bind(this, "/menu")}>RitmTipkovnica</a>
-					</div>
-					<div className="navbar-user">
-						<a onClick={this.changeState.bind(this, "/")}>{signedIn}</a>
-					</div>
+					<a className="navbar-title" onClick={this.changeState.bind(this, "/menu")}>RitmTipkovnica</a>
+					{signedIn}
 				</div>
 			</nav>
 		);
@@ -29,6 +28,13 @@ class Navbar extends React.Component {
 
 	changeState(link) {
 		this.props.history.push(link);
+	}
+
+	logout() {
+		if(typeof localStorage !== "undefined") {
+			localStorage.removeItem("user");
+			this.changeState("/");
+		}
 	}
 }
 

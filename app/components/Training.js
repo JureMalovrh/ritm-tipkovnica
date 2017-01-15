@@ -230,6 +230,15 @@ class Canvas extends React.Component {
 					user = JSON.parse(localStorage.getItem("user"));
 				}
 
+				let allPoints = 0;
+				for(let note of SONG) {
+					if(note.name == "quarter_rest" || note.name == "eighth_rest") {
+						continue;
+					}
+
+					allPoints++;
+				}
+
 				fetch("api/games", {
 					method: "POST",
 					headers: {
@@ -239,21 +248,24 @@ class Canvas extends React.Component {
 					body: JSON.stringify({
 						user: user._id,
 						points: SCORE,
-						// TODO: Don't count rests.
-						allPoints: 3 * SONG.length,
+						allPoints: allPoints,
 						level: LEVEL,
 					})
 				})
-					.then((response) => {
-						if(response.ok) {
-							return response.json();
-						} else {
-							return false;
-						}
-					})
-					.catch((error) => {
-						console.error("ERROR", error);
-					});
+				.then((response) => {
+					if(response.ok) {
+						return response.json();
+					} else {
+						return false;
+					}
+				})
+				.catch((error) => {
+					console.error("ERROR", error);
+				});
+
+				if(SCORE == allPoints) {
+					// TODO: Achievement.
+				}
 			} else {
 				TIMER = 0;
 

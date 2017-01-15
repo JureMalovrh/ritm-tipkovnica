@@ -3,9 +3,9 @@ $primary-color: #333;
 $background-color: #42A9F4;
 
 body {
-	font: 100% $font-stack;
+	font-family: $font-stack;
 	color: $primary-color;
-	padding-top: 130px;
+	padding-top: 100px;
 }
 
 form {
@@ -16,7 +16,6 @@ a:hover {
 	cursor: pointer;
 	text-decoration: none;
 }
-
 
 .menu {
 	padding-top: 20px;
@@ -42,7 +41,7 @@ button {
 	background: $background-color;
 	height: 500px;
 	text-align: center;
-	font-size: 25px; 
+	font-size: 25px;
 }
 
 .navbar-title {
@@ -52,10 +51,18 @@ button {
 	line-height: 50px;
 }
 
-.navbar-user {
+.navbar .dropdown {
 	position: absolute;
-	top: 6px;
+	top: 0px;
 	right: 10px;
+
+	button {
+		border: none;
+		height: 50px;
+		font-size: large;
+		background-color: #F8F8F8;
+		border-radius: 0px;
+	}
 }
 
 canvas {
@@ -70,19 +77,56 @@ canvas:focus {
 	text-align: center;
 }
 
-.theory-navbar h3 {
-	display:inline-block;
+.theory-navbar {
+	text-align: center;
+	border-bottom: 1px solid #E2E2E2;
 }
 
-.theory-navbar h2 {
-	padding-left: 50px;
-	padding-right: 50px;
-	display:inline-block;
+.previous-lecture {
+	position: absolute;
+	top: 0px;
+	left: 20px;
+	font-size: large;
+	height: 45px;
+	line-height: 45px;
 }
 
-.alignleft {
-	float: left;
+.next-lecture {
+	position: absolute;
+	top: 0px;
+	right: 20px;
+	font-size: large;
+	height: 45px;
+	line-height: 45px;
 }
-.alignright {
-	float: right;
+
+.lecture-title {
+	font-size: xx-large;
+}
+
+.lecture-text {
+	padding: 30px 100px;
+	font-size: large;
+}
+
+.lecture-quiz {
+	margin: 0px 200px;
+	padding: 20px;
+	font-size: large;
+	background-color: #F8F8F8;
+	text-align: center;
+
+	button {
+		margin-bottom: 10px;
+	}
+}
+
+.quiz-answers {
+	margin: 15px 0px;
+
+	label {
+		display: inline-block;
+		margin-left: 10px;
+		text-align: left;
+	}
 }
