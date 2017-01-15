@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var path = require('path');
 var Game = mongoose.model('Game');
 
-exports.get10games = function (req, res) {
+exports.getLeaderboards = function (req, res) {
 	let sort = (req.query.sort) ? '-'+req.query.sort : '-date';
 	let level = (req.query.level) ? req.query.level : 1;
 	let userId = req.params.user;
