@@ -6,7 +6,7 @@ class Leaderboards extends React.Component {
 		super(props);
 
 		this.state = {
-			lastAchievements: undefined,
+			lastLeaderboards: undefined,
 		};
 
 		if (typeof localStorage !== 'undefined') {
@@ -18,20 +18,22 @@ class Leaderboards extends React.Component {
 	}
 
 	render() {
-		let achievements = [];
-		if(this.state.lastAchievements) {
-			if(this.state.lastAchievements.length > 0) {
-				this.state.lastAchievements.forEach((achievement, idx) => {
-					achievements.push(
-						<tr key={achievement._id}>
-							<td>{achievement.text}</td>
-							<td>{achievement.description}</td>
-							<td>{moment(achievement.date).format("YYYY-MM-DD HH:mm")}</td>
+		let leaderboards = [];
+		if(this.state.lastLeaderboards) {
+			if(this.state.lastLeaderboards.length > 0) {
+				this.state.lastLeaderboards.forEach((leaderboard, idx) => {
+					leaderboards.push(
+						<tr key={leaderboard._id}>
+							<td>{idx + 1}</td>
+							<td>{leaderboard.user.displayName}</td>
+							<td>{leaderboard.points} / {leaderboard.allPoints}</td>
+							<td>{leaderboard.level}</td>
+							<td>{moment(leaderboard.date).format("YYYY-MM-DD HH:mm")}</td>
 						</tr>
 					);
 				});
 			} else {
-				achievements = <tr><td colSpan={3}>Trenutno nimaš nobenih dosežkov.</td></tr>
+				leaderboards = <tr><td colSpan={5}>Trenutno ni še nihče igral.</td></tr>
 			}
 		}
 
@@ -41,17 +43,19 @@ class Leaderboards extends React.Component {
 				<div className="container">
 					<div className="row">
 						<div className="col-xs-12">
-							<h3>Dosezki</h3>
+							<h3>Lestvica</h3>
 							<table className="table">
 								<thead>
 									<tr>
+										<th>#</th>
 										<th>Ime</th>
-										<th>Opis</th>
+										<th>Točke</th>
+										<th>Stopnja</th>
 										<th>Datum</th>
 									</tr>
 								</thead>
 								<tbody>
-									{achievements}
+									{leaderboards}
 								</tbody>
 							</table>
 						</div>
@@ -71,7 +75,7 @@ class Leaderboards extends React.Component {
 			user = JSON.parse(localStorage.getItem('user'));
 		}
 
-		fetch('/api/achievements/'+user._id+'?sort=date', {
+		fetch("/api/leaderboards", {
 			method: 'GET',
 			headers: {
 				'Accept': 'application/json',
@@ -85,9 +89,10 @@ class Leaderboards extends React.Component {
 				return false;
 			}
 		})
-		.then((achievementsJson) => {
-			if(!(achievementsJson === false)) {
-				this.setState({"lastAchievements": achievementsJson.message});
+		.then((leaderboardsJson) => {
+			console.log(leaderboardsJson);
+			if(!(leaderboardsJson === false)) {
+				this.setState({"lastLeaderboards": leaderboardsJson.message});
 			}
 		});
 	}

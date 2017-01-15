@@ -15,7 +15,7 @@ class Login extends React.Component {
 	handleUsernameChange(e) {
 		this.setState({username: e.target.value});
 	}
-	
+
 	handlePasswordChange(e) {
 		this.setState({password: e.target.value});
 	}
@@ -38,62 +38,50 @@ class Login extends React.Component {
 			errText = <h4 style={{"textAlign": "center", "color": "#ff0000"}}>  </h4>
 		}
 		return (
-			<form className="form-horizontal col-md-offset-4 col-md-4">
-				
-				<div className="form-group">
-					<label htmlFor="inputFirstName" className="col-sm-2 control-label">Ime</label>
-					<div className="col-sm-10">
-						<input type="email" className="form-control" id="inputFirstName" placeholder="Ime" onChange={this.handleFirstNameChange} />
+			<form className="form-horizontal">
+				<div className="row">
+					<div className="form-group">
+						<label htmlFor="inputFirstName" className="col-xs-3 control-label">Ime</label>
+						<div className="col-xs-8">
+							<input type="email" className="form-control" id="inputFirstName" placeholder="Ime" onChange={this.handleFirstNameChange} />
+						</div>
 					</div>
-				</div>
-
-				<div className="form-group">
-					<label htmlFor="inputLastName" className="col-sm-2 control-label">Priimek</label>
-					<div className="col-sm-10">
-						<input type="email" className="form-control" id="inputLastName" placeholder="Priimek" onChange={this.handleLastNameChange} />
+					<div className="form-group">
+						<label htmlFor="inputLastName" className="col-xs-3 control-label">Priimek</label>
+						<div className="col-xs-8">
+							<input type="email" className="form-control" id="inputLastName" placeholder="Priimek" onChange={this.handleLastNameChange} />
+						</div>
 					</div>
-				</div>
-
-				<div className="form-group">
-					<label htmlFor="inputEmail" className="col-sm-2 control-label">Email</label>
-					<div className="col-sm-10">
-						<input type="email" className="form-control" id="inputEmail" placeholder="Email" onChange={this.handleEmailChange} />
+					<div className="form-group">
+						<label htmlFor="inputEmail" className="col-xs-3 control-label">Email</label>
+						<div className="col-xs-8">
+							<input type="email" className="form-control" id="inputEmail" placeholder="Email" onChange={this.handleEmailChange} />
+						</div>
 					</div>
-				</div>
-
-				<div className="form-group">
-					<label htmlFor="inputUsername" className="col-sm-2 control-label">Uporabniško ime</label>
-					<div className="col-sm-10">
-						<input type="text" className="form-control" id="inputUsername" placeholder="Uporabniško ime" onChange={this.handleUsernameChange} />
+					<div className="form-group">
+						<label htmlFor="inputUsername" className="col-xs-3 control-label">Uporabniško ime</label>
+						<div className="col-xs-8">
+							<input type="text" className="form-control" id="inputUsername" placeholder="Uporabniško ime" onChange={this.handleUsernameChange} />
+						</div>
 					</div>
-				</div>
-
-				<div className="form-group">
-					<label htmlFor="inputPassword" className="col-sm-2 control-label">Geslo</label>
-					<div className="col-sm-10">
-						<input type="password" className="form-control" id="inputPassword" placeholder="Geslo" onChange={this.handlePasswordChange} />
+					<div className="form-group">
+						<label htmlFor="inputPassword" className="col-xs-3 control-label">Geslo</label>
+						<div className="col-xs-8">
+							<input type="password" className="form-control" id="inputPassword" placeholder="Geslo" onChange={this.handlePasswordChange} />
+						</div>
 					</div>
-				</div>
-
-				<div className="form-group">
-					<div className="col-sm-offset-2 col-sm-10">
-						<button type="submit" onClick={this.registerUser.bind(this)} className="btn btn-default">Registracija</button>
+					<div className="form-group">
+						<div className="col-xs-12">
+							<button type="submit" onClick={this.registerUser.bind(this)} className="btn btn-default">Registracija</button>
+						</div>
 					</div>
+					{errText}
 				</div>
-				{errText}
 			</form>
-
 		);
 	}
 
 	registerUser(event) {
-		// TODO: Add request, axios or something.
-		console.log("Username " + this.state.username);
-		console.log("Password: " + this.state.password);
-		console.log("firstName: " + this.state.firstName);
-		console.log("lastName: " + this.state.lastName);
-		console.log("email: " + this.state.email);
-
 		fetch('api/user/register', {
 		  method: 'POST',
 		  headers: {
@@ -119,12 +107,12 @@ class Login extends React.Component {
 			console.log(userJson);
 			if(userJson !== false) {
 				localStorage.setItem("user", JSON.stringify(userJson.user));
-				this.props.history.push("menu");		
+				this.props.history.push("menu");
 			} else {
 				this.setState({errorCreatingUser:true});
 			}
-		})
-		.catch((error) => { console.error("ERROR", error); });
+		});
+
 		event.preventDefault();
 	}
 

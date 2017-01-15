@@ -50,6 +50,14 @@ let METRONOME = {
 	buffer: [],
 };
 
+let KEYS = {
+	hit: " ",
+	retry: "r",
+	next: "n",
+	harder: "u",
+	easier: "d",
+};
+
 for(let i = 0; i < COUNT; i++) {
 	let time = i * LENGTH / COUNT;
 
@@ -194,6 +202,18 @@ class Canvas extends React.Component {
 	}
 
 	init() {
+		if(typeof localStorage !== "undefined") {
+			let keys = JSON.parse(localStorage.getItem("keys"));
+
+			if(keys) {
+				KEYS.hit = keys.hit;
+				KEYS.retry = keys.retry;
+				KEYS.next = keys.next;
+				KEYS.harder = keys.harder;
+				KEYS.easier = keys.easier;
+			}
+		}
+
 		let temp = setInterval(() => {}, 1000);
 
 		for(let i = 0; i <= temp; i++) {
@@ -236,7 +256,7 @@ class Canvas extends React.Component {
 						continue;
 					}
 
-					allPoints++;
+					allPoints += 3;
 				}
 
 				fetch("api/games", {
@@ -346,10 +366,10 @@ class Canvas extends React.Component {
 			context.fillText(metronome, CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
 		} else if(PHASE == 5) {
 			context.font = "16px Arial";
-			context.fillText("r - Ponovi", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 100);
-			context.fillText("n - Naprej", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 75);
-			context.fillText("u - Težje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 50);
-			context.fillText("d - Lažje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 25);
+			context.fillText(KEYS.retry + " - Ponovi", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 100);
+			context.fillText(KEYS.next + " - Naprej", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 75);
+			context.fillText(KEYS.harder + " - Težje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 50);
+			context.fillText(KEYS.easier + " - Lažje", CANVAS_WIDTH - 90, CANVAS_HEIGHT - 25);
 		}
 
 		context.font = "24px Arial";
@@ -363,19 +383,19 @@ class Canvas extends React.Component {
 		}
 
 		if(PHASE == 5) {
-			if(event.key != "r" && event.key != "n" && event.key != "u" && event.key != "d") {
+			if(event.key != KEYS.retry && event.key != KEYS.next && event.key != KEYS.harder && event.key != KEYS.easier) {
 				return;
 			}
 
 			GENERATE = true;
 
-			if(event.key == "r") {
+			if(event.key == KEYS.retry) {
 				GENERATE = false;
 			}
 
-			if(event.key == "u") {
+			if(event.key == KEYS.harder) {
 				LEVEL++;
-			} else if(event.key == "d") {
+			} else if(event.key == KEYS.easier) {
 				LEVEL--;
 			}
 
@@ -394,7 +414,7 @@ class Canvas extends React.Component {
 			return;
 		}
 
-		if(event.key != " " || PRESSED == true) {
+		if(event.key != KEYS.hit || PRESSED == true) {
 			return;
 		}
 
@@ -477,7 +497,7 @@ class Canvas extends React.Component {
 	}
 
 	keyUp(event) {
-		PRESSED = (event.key == " ") ? false : PRESSED;
+		PRESSED = (event.key == KEYS.hit) ? false : PRESSED;
 	}
 
 	render() {
@@ -492,7 +512,7 @@ class Training extends React.Component {
 		return (
 			<div>
 				<Navbar signedIn={true} history={this.props.history} />
-				<div className="col-md-offset-2 col-md-8 center">
+				<div className="center">
 					<Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
 				</div>
 				<div>

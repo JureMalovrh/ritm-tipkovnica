@@ -18,17 +18,23 @@ class First extends React.Component {
 		return (
 			<div >
 				<Navbar history={this.props.history} />
-
-				<h3 style={{"textAlign": "center"}}> Dobrodošli na strani RitmTipkovnica, ki vam bo pomagala pri učenju ritma. </h3>
-				<h3 style={{"textAlign": "center"}}> V kolikor se še niste registrirali lahko to storite zdaj, ... </h3>
-
-				<h1 style={{"textAlign": "center"}}> Registracija </h1>
-				<Registration history={this.props.history} />
-
-				<h3 style={{"textAlign": "center", "clear": "both"}}> ..., lahko pa se vpišete </h3>
-
-				<Login history={this.props.history}/>
-
+				<div className="container">
+					<div className="row">
+						<div className="col-xs-12" style={{"textAlign": "center", "marginBottom": "20px"}}>
+							<h4>Dobrodošli na strani RitmTipkovnica, ki vam bo pomagala pri učenju ritma.</h4>
+						</div>
+					</div>
+					<div className="row">
+						<div className="col-sm-6" style={{"textAlign": "center"}}>
+							<h3>Registracija</h3>
+							<Registration history={this.props.history} />
+						</div>
+						<div className="col-sm-6" style={{"textAlign": "center"}}>
+							<h3>Prijava</h3>
+							<Login history={this.props.history} />
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	}
