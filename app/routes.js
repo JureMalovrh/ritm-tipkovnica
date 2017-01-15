@@ -6,6 +6,7 @@ import Menu from "./components/Menu";
 import Training from "./components/Training";
 import Theory from "./components/Theory";
 import Achievements from "./components/Achievements";
+import Leaderboards from "./components/Leaderboards";
 import First from "./components/First";
 import Settings from "./components/Settings";
 
@@ -16,6 +17,7 @@ export default (
 		<Route path="/training" component={Training} />
 		<Route path="/theory/:page" component={Theory} />
 		<Route path="/achievements" component={Achievements} />
+		<Route path="/leaderboards" component={Leaderboards} />
 		<Route path="/settings" component={Settings} />
 	</Route>
 );

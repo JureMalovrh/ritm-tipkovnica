@@ -11,6 +11,9 @@ let links = [{
 	name: "Dosežki",
 	route: "achievements",
 }, {
+	name: "Lestvica",
+	route: "leaderboards",
+}, {
 	name: "Nastavitve",
 	route: "settings",
 }];
