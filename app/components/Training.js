@@ -58,8 +58,8 @@ let KEYS = {
 	easier: "d",
 };
 
-for(let i = 0; i < COUNT; i++) {
-	let time = i * LENGTH / COUNT;
+for(let i = 0; i < 8; i++) {
+	let time = i * 250;
 
 	if(typeof Audio !== "undefined") {
 		METRONOME.buffer.push({
@@ -294,13 +294,29 @@ class Canvas extends React.Component {
 					} else {
 						return false;
 					}
-				})
-				.catch((error) => {
-					console.error("ERROR", error);
 				});
 
 				if(SCORE == allPoints) {
-					// TODO: Achievement.
+					fetch("api/achievements", {
+						method: "POST",
+						headers: {
+							"Accept": "application/json",
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							user: user._id,
+							level: LEVEL,
+							text: "Overachiever",
+							description: "Dosegel si vse možne točke v igri.",
+						})
+					})
+					.then((response) => {
+						if(response.ok) {
+							return response.json();
+						} else {
+							return false;
+						}
+					});
 				}
 			} else {
 				TIMER = 0;
@@ -407,12 +423,75 @@ class Canvas extends React.Component {
 
 			if(event.key == KEYS.retry) {
 				GENERATE = false;
+
+				fetch("api/achievements", {
+					method: "POST",
+					headers: {
+						"Accept": "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						user: user._id,
+						level: LEVEL,
+						text: "Vaja dela mojstra",
+						description: "Ponovil si vajo.",
+					})
+				})
+				.then((response) => {
+					if(response.ok) {
+						return response.json();
+					} else {
+						return false;
+					}
+				});
 			}
 
 			if(event.key == KEYS.harder) {
 				LEVEL++;
+
+				fetch("api/achievements", {
+					method: "POST",
+					headers: {
+						"Accept": "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						user: user._id,
+						level: LEVEL,
+						text: "Are you sure? Part " + (LEVEL - 1),
+						description: "Povečal si težavnost. Si zares pripravljen?",
+					})
+				})
+				.then((response) => {
+					if(response.ok) {
+						return response.json();
+					} else {
+						return false;
+					}
+				});
 			} else if(event.key == KEYS.easier) {
 				LEVEL--;
+
+				fetch("api/achievements", {
+					method: "POST",
+					headers: {
+						"Accept": "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						user: user._id,
+						level: LEVEL,
+						text: "Zdrava samokritika. Part " + LEVEL,
+						description: "Zmanjšal si težavnost. Izgleda, da si bil preveč optimističen.",
+					})
+				})
+				.then((response) => {
+					if(response.ok) {
+						return response.json();
+					} else {
+						return false;
+					}
+				});
 			}
 
 			if(event.key == KEYS.harder || event.key == KEYS.easier) {
