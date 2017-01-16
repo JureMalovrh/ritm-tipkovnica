@@ -40,8 +40,8 @@ let NUM_PRESSES = 0;
 let NUM_HITS = 0;
 let SCORE = 0;
 
-let MARGIN = 15;
-let MARGIN_OK = 30;
+let MARGIN = 20;
+let MARGIN_OK = 40;
 let FIRST_NOTE = null;
 
 let METRONOME = {
@@ -156,6 +156,22 @@ function drawNotes() {
 		for(let note of SONG) {
 			x += 32;
 			context.drawImage(images[note.name], x, y, 32, 32);
+		}
+	} else if(LEVEL == 3) {
+		let x = CANVAS_WIDTH / 2 - SONG.length * 16 - 32;
+		let prev = null;
+
+		for(let note of SONG) {
+			x += 32;
+
+			if(prev !== null) {
+				if(prev.time < 1000 && 1000 <= note.time) {
+					context.fillRect(x - 1, y - 5, 2, 42);
+				}
+			}
+
+			context.drawImage(images[note.name], x, y, 32, 32);
+			prev = note;
 		}
 	}
 }
@@ -312,7 +328,7 @@ class Canvas extends React.Component {
 		let metronome = parseInt(TIMER / (LENGTH / COUNT)) + 1;
 
 		if(PHASE == 1) {
-			context.fillText((5 - metronome) + "...", CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
+			context.fillText(((COUNT + 1) - metronome) + "...", CANVAS_WIDTH / 2 - 8, CANVAS_HEIGHT / 2 + 60);
 		} else if(PHASE > 1 && PHASE < 5) {
 			let x = CANVAS_WIDTH / 2 - SONG.length * 16 - 32;
 
@@ -324,7 +340,7 @@ class Canvas extends React.Component {
 				}
 
 				if(note.hit === false && TIMER > note.time + 3.75 * MARGIN_OK) {
-					if(LEVEL == 2) {
+					if(LEVEL == 2 || LEVEL == 3) {
 						context.fillStyle = "#FF0000";
 						context.fillRect(x + 16 - 2, 250, 4, 4);
 						context.fillStyle = "#000000";
@@ -354,7 +370,7 @@ class Canvas extends React.Component {
 
 				if(LEVEL == 1) {
 					context.fillRect(30 + (0 - timing) / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
-				} else if(LEVEL == 2) {
+				} else if(LEVEL == 2 || LEVEL == 3) {
 					let x = CANVAS_WIDTH / 2 - SONG.length * 16;
 					context.fillRect(x + 16 - 2, 250, 4, 4);
 				}
@@ -397,6 +413,16 @@ class Canvas extends React.Component {
 				LEVEL++;
 			} else if(event.key == KEYS.easier) {
 				LEVEL--;
+			}
+
+			if(event.key == KEYS.harder || event.key == KEYS.easier) {
+				if(LEVEL == 1 || LEVEL == 2) {
+					LENGTH = 1000;
+					COUNT = 4;
+				} else if(LEVEL == 3) {
+					COUNT = 8;
+					LENGTH = 2000;
+				}
 			}
 
 			NUM_PRESSES = 0;
@@ -454,7 +480,7 @@ class Canvas extends React.Component {
 			}
 
 			context.fillRect(30 + TIMER / LENGTH * BAR_WIDTH - 2, 250 + 16, 4, 4);
-		} else if(LEVEL == 2) {
+		} else if(LEVEL == 2 || LEVEL == 3) {
 			let x = CANVAS_WIDTH / 2 - SONG.length * 16 - 32;
 
 			for(let note of SONG) {
