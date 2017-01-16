@@ -247,8 +247,13 @@ class Canvas extends React.Component {
 	tick() {
 		if(METRONOME.mute === false) {
 			for(let tick of METRONOME.buffer) {
+				if((LEVEL == 1 || LEVEL == 2) && tick.start > 900) {
+					continue;
+				}
+
 				if(TIMER >= tick.start && TIMER <= tick.end) {
 					tick.audio.play();
+					break;
 				}
 			}
 		}
@@ -415,6 +420,11 @@ class Canvas extends React.Component {
 		}
 
 		if(PHASE == 5) {
+			let user = null;
+			if(typeof localStorage !== "undefined") {
+				user = JSON.parse(localStorage.getItem("user"));
+			}
+
 			if(event.key != KEYS.retry && event.key != KEYS.next && event.key != KEYS.harder && event.key != KEYS.easier) {
 				return;
 			}
