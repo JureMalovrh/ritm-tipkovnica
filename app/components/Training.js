@@ -630,8 +630,20 @@ class Training extends React.Component {
 				<div className="center">
 					<Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
 				</div>
-				<div>
-					<button onClick={() => { METRONOME.mute = !METRONOME.mute; }}>Mute</button>
+				<div className="container" style={{"marginTop": "30px"}}>
+					<div className="row">
+						<div className="col-xs-12" style={{"padding": "0px 50px"}}>
+							<p>Pozdravljeni v treningu ritma. V zgornjem igralnem oknu boste videli različne note. Navodila za igro so preprosta. V ritmu tipkajte po tipkovnici in tako pridobivajte točke.</p>
+							<span>Tipke za igranje:</span>
+							<ul>
+								<li>presledek: udarec note</li>
+								<li>r: ponovi trenutni ritem</li>
+								<li>n: nadaljuj na naslednji ritem</li>
+								<li>u: povečaj težavnost</li>
+								<li>n: zmanjšaj težavnost</li>
+							</ul>
+						</div>
+					</div>
 				</div>
 			</div>
 		);
