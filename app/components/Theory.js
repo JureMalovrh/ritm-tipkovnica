@@ -109,6 +109,12 @@ class Theory extends React.Component {
 
 		if(this.state.quizAnswered && !(typeof (this.state.quizCheck) == "boolean")) {
 			quizCheckButton = <button disabled type="submit" onClick={this.checkAnswer.bind(this)} className="btn btn-default">Preveri</button>
+			if(this.state.quizUserAnswer === this.state.quizCorrectAnswer) {
+				console.log("Quiz user answer ", this.state.quizUserAnswer);
+				checkText = <p> Pravilno si odgovoril na vprašanje. Pravilen odgovor: {this.state.quizUserAnswer}.</p>
+			} else {
+				checkText = <p> Napačno si odgovoril na vprašanje. Pravilen odgovor: {this.state.quizCorrectAnswer}, tvoj odgovor: {this.state.quizUserAnswer} </p>
+			}
 		} else {
 			quizCheckButton = <button type="submit" onClick={this.checkAnswer.bind(this)} className="btn btn-default">Preveri</button>
 		}
